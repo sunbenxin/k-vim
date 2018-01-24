@@ -17,7 +17,7 @@ filetype off " required! turn off
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
     " let g:bundle_groups=['python', 'javascript', 'golang', 'php', 'ruby', 'shell', 'markdown', 'html', 'css', 'less', 'coffeescript', 'tmux', 'json', 'beta']
-    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'golang', 'shell']
+    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'golang', 'shell', 'javascript']
 endif
 
 " ----------------------------------------------------------------------------
@@ -243,7 +243,10 @@ if count(g:bundle_groups, 'coffeescript')
 endif
 
 if count(g:bundle_groups, 'shell')
+    Plug 'shougo/unite.vim'
+    Plug 'Shougo/vimproc.vim', {'do' : 'make'}
     Plug 'Shougo/vimshell.vim'
+    "let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 endif
 
 if count(g:bundle_groups, 'json')
@@ -318,8 +321,8 @@ if has_key(g:plugs, 'syntastic')
     let g:syntastic_python_flake8_args='--ignore=E501,E225,E124,E712,E116,E131'
 
     " javascript
-    " let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-    " let g:syntastic_html_checkers=['tidy', 'jshint']
+    let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+    let g:syntastic_html_checkers=['tidy', 'jshint']
     " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
     " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
     let g:syntastic_javascript_checkers = ['eslint']
@@ -865,7 +868,7 @@ endif
 
 
 " javascript {{{
-    " pangloss/vim-javascript
+    "plug pangloss/vim-javascript
     let g:html_indent_inctags = "html,body,head,tbody"
     let g:html_indent_script1 = "inc"
     let g:html_indent_style1 = "inc"
