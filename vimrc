@@ -75,6 +75,8 @@ set nobackup
 " 关闭交换文件
 set noswapfile
 
+" 版本提交空格标示
+" set list listchars=tab:\ \ ,trail:·
 
 " TODO: remove this, use gundo
 " create undo file
@@ -657,8 +659,9 @@ endif
 set background=dark
 set t_Co=256
 
-"colorscheme solarized
+" colorscheme solarized
  colorscheme molokai
+" colorscheme desert
 
 
 " 设置标记一列的背景颜色和数字一行颜色一致
