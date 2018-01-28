@@ -258,7 +258,11 @@ endif
 " FileEncode Settings 文件编码,格式
 "==========================================
 " 设置新文件的编码为 UTF-8
-set encoding=utf-8
+try
+    set encoding=utf-8
+"reload $MYVIMRC error
+catch E905
+endtry
 " 自动判断编码时，依次尝试以下编码：
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set helplang=cn
