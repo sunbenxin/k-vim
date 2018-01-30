@@ -305,7 +305,8 @@ Plug 'vim-scripts/c.vim'
 Plug 'vim-scripts/taglist.vim'
 Plug 'chazy/cscope_maps'
 
-Plug 'jaxbot/github-issues.vim'
+" issues will hang when run git commit
+"Plug 'jaxbot/github-issues.vim'
 " Add plugins to &runtimepath
 call plug#end()
 
