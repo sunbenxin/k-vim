@@ -75,6 +75,8 @@ set nobackup
 " 关闭交换文件
 set noswapfile
 
+" 版本提交空格标示
+" set list listchars=tab:\ \ ,trail:·
 
 " TODO: remove this, use gundo
 " create undo file
@@ -256,7 +258,11 @@ endif
 " FileEncode Settings 文件编码,格式
 "==========================================
 " 设置新文件的编码为 UTF-8
-set encoding=utf-8
+try
+    set encoding=utf-8
+"reload $MYVIMRC error
+catch E905
+endtry
 " 自动判断编码时，依次尝试以下编码：
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set helplang=cn
@@ -657,8 +663,9 @@ endif
 set background=dark
 set t_Co=256
 
-"colorscheme solarized
+" colorscheme solarized
  colorscheme molokai
+" colorscheme desert
 
 
 " 设置标记一列的背景颜色和数字一行颜色一致

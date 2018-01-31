@@ -16,8 +16,8 @@ filetype off " required! turn off
 
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
-    " let g:bundle_groups=['python', 'javascript', 'golang', 'php', 'ruby', 'shell', 'markdown', 'html', 'css', 'less', 'coffeescript', 'tmux', 'json', 'beta']
-    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'golang', 'shell', 'javascript']
+    " let g:bundle_groups=['python', 'javascript', 'markdown', 'html', 'css', 'tmux', 'beta', 'json', 'nginx', 'golang', 'ruby', 'less', 'php', 'coffeescript', 'shell']
+    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'beta', 'golang', 'shell', 'nginx', 'javascript']
 endif
 
 " ----------------------------------------------------------------------------
@@ -124,6 +124,7 @@ Plug 'thinca/vim-quickrun'
 " git
 " fugitive
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim'
 " gitgutter
 Plug 'airblade/vim-gitgutter'
 "gv
@@ -177,10 +178,10 @@ if count(g:bundle_groups, 'markdown')
     Plug 'plasticboy/vim-markdown', {'for': 'md'}
     " https://github.com/suan/vim-instant-markdown
     " npm -g install instant-markdown-d
-    " Plug 'suan/vim-instant-markdown'
-    " let g:instant_markdown_slow = 1
-    " let g:instant_markdown_autostart = 0
-    " map <F12> :InstantMarkdownPreview<CR>
+    Plug 'suan/vim-instant-markdown'
+    let g:instant_markdown_slow = 1
+    let g:instant_markdown_autostart = 0
+    map <F12> :InstantMarkdownPreview<CR>
 endif
 
 if count(g:bundle_groups, 'golang')
@@ -234,7 +235,7 @@ if count(g:bundle_groups, 'javascript')
     " for javascript 自动补全, 配合YCM, 需要安装全局环境的（非nvm中) node.js&npm
     " 安装完成后还需要在 bundle/tern_for_vim 下执行 npm install 安装依赖 `cd ~/.vim/bundle/tern_for_vim && npm install`
     " see https://github.com/marijnh/tern_for_vim
-    " Plug 'marijnh/tern_for_vim', {'do': 'npm install'}
+    Plug 'marijnh/tern_for_vim', {'do': 'npm install'}
 endif
 
 
@@ -272,7 +273,11 @@ endif
 
 if count(g:bundle_groups, 'html')
     " ###### emmet HTML complete #########
-    " Plug 'mattn/emmet-vim'
+    " Plug "mattn/emmet-vim"
+endif
+
+if count(g:bundle_groups, 'nginx')
+     Plug 'evanmiller/nginx-vim-syntax'
 endif
 
 " this is just for beta version
@@ -296,7 +301,12 @@ if count(g:bundle_groups, 'beta')
 
 endif
 
+Plug 'vim-scripts/c.vim'
+Plug 'vim-scripts/taglist.vim'
+Plug 'chazy/cscope_maps'
 
+" issues will hang when run git commit
+"Plug 'jaxbot/github-issues.vim'
 " Add plugins to &runtimepath
 call plug#end()
 
@@ -902,4 +912,12 @@ endif
 
 " }}}
 
+" ######### personal plugin #########
+" VMAIL
+"Plug 'danchoi/vmail'
+
+"pgsql
+"Plug 'lifepillar/pgsql.vim'
+
+"Plug 'linluk/vim-websearch'
 "------------------------------------------- end of configs --------------------------------------------
