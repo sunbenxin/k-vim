@@ -17,7 +17,7 @@ filetype off " required! turn off
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
     " let g:bundle_groups=['python', 'javascript', 'markdown', 'html', 'css', 'tmux', 'beta', 'json', 'nginx', 'golang', 'ruby', 'less', 'php', 'coffeescript', 'shell']
-    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'beta', 'golang', 'shell', 'nginx', 'javascript']
+    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'tmux', 'beta', 'golang', 'shell', 'nginx', 'javascript', 'php']
 endif
 
 " ----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'chazy/cscope_maps'
 
 " issues will hang when run git commit
-"Plug 'jaxbot/github-issues.vim'
+Plug 'jaxbot/github-issues.vim'
 " Add plugins to &runtimepath
 call plug#end()
 
@@ -663,7 +663,7 @@ endif
     " :Gdiff  :Gstatus :Gvsplit
     nnoremap <leader>ge :Gdiff<CR>
     " not ready to open
-    " <leader>gb maps to :Gblame<CR>
+    " nnoremap <leader>gb maps to :Gblame<CR>
     " <leader>gs maps to :Gstatus<CR>
     " <leader>gd maps to :Gdiff<CR>  和现有冲突
     " <leader>gl maps to :Glog<CR>
@@ -902,13 +902,13 @@ endif
     " format select block
     autocmd FileType python vnoremap <leader>y :!yapf<Cr>
 
-    " Plug 'posva/vim-vue'
+    Plug 'posva/vim-vue'
 
-    " Plug 'millermedeiros/vim-esformatter'
+    Plug 'millermedeiros/vim-esformatter'
     " will run esformatter after pressing <leader> followed by the 'e' and 's'
     " keys
-    " nnoremap <silent> <leader>es :Esformatter<CR>
-    " vnoremap <silent> <leader>es :EsformatterVisual<CR>
+    nnoremap <silent> <leader>es :Esformatter<CR>
+    vnoremap <silent> <leader>es :EsformatterVisual<CR>
 
 " }}}
 
