@@ -281,7 +281,7 @@ if count(g:bundle_groups, 'html')
 endif
 
 if count(g:bundle_groups, 'nginx')
-     Plug 'evanmiller/nginx-vim-syntax'
+     Plug 'fbernier/nginx-vim-syntax'
 endif
 
 " this is just for beta version
@@ -310,7 +310,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'chazy/cscope_maps'
 
 " issues will hang when run git commit
-"Plug 'jaxbot/github-issues.vim'
+Plug 'jaxbot/github-issues.vim'
 " Add plugins to &runtimepath
 call plug#end()
 
@@ -668,7 +668,7 @@ endif
     " :Gdiff  :Gstatus :Gvsplit
     nnoremap <leader>ge :Gdiff<CR>
     " not ready to open
-    " <leader>gb maps to :Gblame<CR>
+    " nnoremap <leader>gb maps to :Gblame<CR>
     " <leader>gs maps to :Gstatus<CR>
     " <leader>gd maps to :Gdiff<CR>  和现有冲突
     " <leader>gl maps to :Glog<CR>
@@ -908,13 +908,13 @@ endif
     " format select block
     autocmd FileType python vnoremap <leader>y :!yapf<Cr>
 
-    " Plug 'posva/vim-vue'
+    Plug 'posva/vim-vue'
 
-    " Plug 'millermedeiros/vim-esformatter'
+    Plug 'millermedeiros/vim-esformatter'
     " will run esformatter after pressing <leader> followed by the 'e' and 's'
     " keys
-    " nnoremap <silent> <leader>es :Esformatter<CR>
-    " vnoremap <silent> <leader>es :EsformatterVisual<CR>
+    nnoremap <silent> <leader>es :Esformatter<CR>
+    vnoremap <silent> <leader>es :EsformatterVisual<CR>
 
 " }}}
 
