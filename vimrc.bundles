@@ -201,7 +201,7 @@ if count(g:bundle_groups, 'python')
 
     " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isort#installation
     " pip install isort
-    "Plug 'fisadev/vim-isort'
+    Plug 'fisadev/vim-isort'
     " Shift-V 上下选中, ctrl + i 规范化
     Plug 'python-mode/python-mode', { 'branch': 'develop' }
     let g:vim_isort_map = '<C-i>'
@@ -248,7 +248,10 @@ if count(g:bundle_groups, 'shell')
     Plug 'shougo/unite.vim'
     Plug 'Shougo/vimproc.vim', {'do' : 'make'}
     Plug 'Shougo/vimshell.vim'
+    Plug 'Shougo/deol.nvim'
+    Plug 'zchee/deoplete-zsh'
     "let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+    let g:vimshell_use_terminal_command = "zsh"
 endif
 
 if count(g:bundle_groups, 'json')
@@ -293,7 +296,7 @@ if count(g:bundle_groups, 'beta')
     " autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=black
 
     " Plug 'robbles/logstash.vim'
-    " Plug 'ryanoasis/vim-devicons'
+    Plug 'ryanoasis/vim-devicons'
     " Plug 'ekalinin/dockerfile.vim'
 
     " Plug 'ConradIrwin/vim-bracketed-paste'
@@ -332,7 +335,7 @@ if has_key(g:plugs, 'syntastic')
     " python
     " pip install flake8
     let g:syntastic_python_checkers=['flake8', ] " 使用pyflakes,速度比pylint快
-    let g:syntastic_python_flake8_args='--ignore=E501,E225,E124,E712,E116,E131'
+    let g:syntastic_python_flake8_options='--ignore=E501,E225,E124,E712,E116,E131'
 
     " javascript
     let g:syntastic_javascript_checkers = ['jsl', 'jshint']
@@ -451,6 +454,7 @@ endif
     let g:ycm_use_ultisnips_completer = 1 "提示UltiSnips
     let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
     let g:ycm_collect_identifiers_from_tags_files = 1
+    let g:snips_author_email="sunbenxin007@gmail.com"
     " 开启语法关键字补全
     let g:ycm_seed_identifiers_with_syntax=1
     " 回车作为选中
@@ -788,7 +792,8 @@ endif
 
 " 标签导航
 " tagbar {{{
-    nmap <F9> :TagbarToggle<CR>
+    "nmap <F9> :TagbarToggle<CR>
+    nmap <Leader>t :TagbarToggle<CR>
     let g:tagbar_autofocus = 1
     " let g:tagbar_autoshowtag = 1
     " let g:tagbar_show_visibility = 1
