@@ -315,6 +315,9 @@ Plug 'jaxbot/github-issues.vim'
 
 " test
 Plug 'sunbenxin/vimshell'
+Plug 'posva/vim-vue'
+
+Plug 'millermedeiros/vim-esformatter'
 call plug#end()
 
 
@@ -911,9 +914,9 @@ endif
     " format select block
     autocmd FileType python vnoremap <leader>y :!yapf<Cr>
 
-    Plug 'posva/vim-vue'
+    "Plug 'posva/vim-vue'
 
-    Plug 'millermedeiros/vim-esformatter'
+    "Plug 'millermedeiros/vim-esformatter'
     " will run esformatter after pressing <leader> followed by the 'e' and 's'
     " keys
     nnoremap <silent> <leader>es :Esformatter<CR>
