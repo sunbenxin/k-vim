@@ -84,6 +84,7 @@ fi
 if $FOR_NEOVIM; then
     lnif "$CURRENT_DIR/" "${FILES[0]}"
     lnif $CURRENT_DIR/vimrc $CURRENT_DIR/init.vim
+    lnif $CURRENT_DIR/vimrc.bundles $HOME/.vimrc.bundles
 fi
 
 echo "Step3: update/install plugins using Vim-plug"
@@ -92,7 +93,7 @@ export SHELL="/bin/sh"
 if $FOR_VIM; then
     vim -u $HOME/.vimrc.bundles +PlugInstall! +PlugClean! +qall
 else
-    nvim -u ~/.config/nvim/vimrc.bundles +PlugInstall! +PlugClean! +qall
+    nvim -u ~/.vimrc.bundles +PlugInstall! +PlugClean! +qall
 fi
 export SHELL=$system_shell
 
