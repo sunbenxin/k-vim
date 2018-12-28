@@ -320,6 +320,8 @@ Plug 'posva/vim-vue'
 Plug 'millermedeiros/vim-esformatter'
 
 Plug 'vim-scripts/dbext.vim'
+Plug 'guofh/VimStock'
+    " pip install requests pandas lxml html5lib bs4
 call plug#end()
 
 
