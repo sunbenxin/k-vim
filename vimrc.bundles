@@ -198,6 +198,7 @@ if count(g:bundle_groups, 'python')
     "Plug 'hdima/python-syntax'
     "Plug 'hynek/vim-python-pep8-indent'
     "Plug 'Glench/Vim-Jinja2-Syntax'
+    let g:python_host_prog  = '/usr/local/bin/python2.7'
 
     " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isort#installation
     " pip install isort
@@ -321,7 +322,7 @@ Plug 'posva/vim-vue'
 Plug 'millermedeiros/vim-esformatter'
 
 Plug 'vim-scripts/dbext.vim'
-Plug 'guofh/VimStock'
+"Plug 'guofh/VimStock'
     " pip install requests pandas lxml html5lib bs4
 
 "Plug '7kfpun/finance.vim'
@@ -329,7 +330,6 @@ Plug 'guofh/VimStock'
 Plug 'aquach/vim-http-client'
 Plug 'szw/vim-dict'
 Plug 'shumphrey/fugitive-gitlab.vim'
-let g:fugitive_gitlab_domains = ['https://gitlab.p1staff.com', 'https://github.com']
 call plug#end()
 
 
@@ -693,6 +693,7 @@ endif
     " <leader>gc maps to :Gcommit<CR>
     " <leader>gp maps to :Git push<CR>
     " let g:fugitive_browse_handlers = ['chrome']
+    let g:fugitive_gitlab_domains = ['https://gitlab.p1staff.com', 'https://github.com']
 " }}}
 
 " gitgutter {{{
@@ -949,7 +950,6 @@ endif
     vnoremap <silent> <leader>es :EsformatterVisual<CR>
 
 " }}}
-
 " ######### personal plugin #########
 " VMAIL
 "Plug 'danchoi/vmail'
