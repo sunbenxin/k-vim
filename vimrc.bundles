@@ -17,7 +17,7 @@ filetype off " required! turn off
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
     " let g:bundle_groups=['python', 'javascript', 'markdown', 'html', 'css', 'tmux', 'beta', 'json', 'nginx', 'golang', 'ruby', 'less', 'php', 'coffeescript', 'shell']
-    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'beta', 'golang', 'shell', 'nginx', 'javascript', 'php', 'ruby']
+    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'beta', 'golang', 'shell', 'nginx', 'javascript', 'php', 'ruby', 'json']
 endif
 
 " ----------------------------------------------------------------------------
@@ -257,6 +257,7 @@ endif
 if count(g:bundle_groups, 'json')
     " json
     Plug 'elzr/vim-json', {'for': 'json'}
+    Plug 'XadillaX/json-formatter.vim'
 endif
 
 if count(g:bundle_groups, 'css')
@@ -310,7 +311,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'chazy/cscope_maps'
 
 " issues will hang when run git commit
-Plug 'jaxbot/github-issues.vim'
+" Plug 'jaxbot/github-issues.vim'
 " Add plugins to &runtimepath
 
 " test
@@ -322,6 +323,13 @@ Plug 'millermedeiros/vim-esformatter'
 Plug 'vim-scripts/dbext.vim'
 Plug 'guofh/VimStock'
     " pip install requests pandas lxml html5lib bs4
+
+"Plug '7kfpun/finance.vim'
+"Plug 'mattn/webapi-vim'
+Plug 'aquach/vim-http-client'
+Plug 'szw/vim-dict'
+Plug 'shumphrey/fugitive-gitlab.vim'
+let g:fugitive_gitlab_domains = ['https://gitlab.p1staff.com', 'https://github.com']
 call plug#end()
 
 
@@ -684,6 +692,7 @@ endif
     " <leader>gl maps to :Glog<CR>
     " <leader>gc maps to :Gcommit<CR>
     " <leader>gp maps to :Git push<CR>
+    " let g:fugitive_browse_handlers = ['chrome']
 " }}}
 
 " gitgutter {{{
@@ -902,11 +911,24 @@ endif
 
 " json {{{
     let g:vim_json_syntax_conceal = 0
+    nnoremap <leader>j :JSONFormatter<cr>
 " }}}
 
 " css {{{
 " }}}
 
+" dbext {{{
+    let g:dbext_default_profile_mysql_tsp_dev = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_mysql_kpi_dev = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_mysql_admin_dev = 'type=MYSQL:user=root:passwd=P@ssw0rd!:host=10.189.100.29:extra=-t'
+    "let g:dbext_default_profile_mysql_tsp_prod = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.9.173.80:extra=-t'
+    "let g:dbext_default_profile_mysql_kpi_prod = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.9.173.80:extra=-t'
+    "let g:dbext_default_profile_mysql_admin_prod = 'type=MYSQL:user=root:passwd=bbr;p7Wia^:host=10.9.173.80:extra=-t'
+    "let g:dbext_default_profile_mysql_tsp_dev = 'type=MYSQL:user=root:passwd=whatever:dbname=mysql:extra=--batch --raw --silent'
+    "let g:dbext_default_profile_mysql_tsp_dev = "type=MYSQL:user=root:dbname=mysql:extra=--password='' "
+    "let g:dbext_default_profile_mysql_tsp_dev_DBI = 'type=DBI:user=tsp_workbench:passwd=P@ssw0rd!:driver=mysql:conn_parms=database=tsp_workbench;host=10.189.100.29'
+    "let g:dbext_default_profile_mysql_tsp_dev_ODBC = 'type=ODBC:user=root:passwd=whatever:dsnname=mysql'
+" }}}
 
 " ####### temp #######
 
@@ -936,4 +958,50 @@ endif
 "Plug 'lifepillar/pgsql.vim'
 
 "Plug 'linluk/vim-websearch'
+"
+" vimStock {{{
+"map ,60 :Vzdf<CR>  
+"map ,60<CR> :Vzdfd<CR>  
+"
+"map ,80 :Vzs<CR>  
+"map ,80<CR> :Vzsd<CR>  
+"
+"map ,zdf :Vzdf<CR>  
+"map ,zdf<CR> :Vzdfd<CR>  
+"
+"map ,zs :Vzs<CR>  
+"map ,zs<CR> :Vzsd<CR>  
+"
+"map ,hs :Vhs<CR>  
+"map ,hs<CR> :Vhsd<CR>  
+"
+"map ,gn :Vgn<CR>  
+"map ,gn<CR> :Vgnd<CR>  
+"
+"map ,hy :Vhy<CR>  
+"map ,hy<CR> :Vhyd<CR>  
+"
+"map ,dde :Vdde<CR>
+"map ,dde<CR> :Vdded<CR>
+"
+"map ,r :Vr<CR>  
+"map ,run :Vrun<CR>  
+"
+"map ,n :Vn<CR>  
+"map ,p :Vp<CR>  
+"
+"map ,j :resize -5<CR>
+"map ,k :resize +5<CR>
+"map ,h :vertical resize -5<CR>
+"map ,l :vertical resize +5<CR>
+"
+"map ,new :new<CR>5<C-w>_:Vzs<CR>
+"map ,o <C-w>j:resize +5<CR>
+"map ,c <C-w>j:resize -5<CR>
+"
+"map ,go :Vgo<CR>
+"map ,<CR> :Vgo<CR>
+"
+"map ,zx :Vmystock<CR>
+" }}}
 "------------------------------------------- end of configs --------------------------------------------
