@@ -644,7 +644,8 @@ set lazyredraw          " redraw only when we need to.
 if has("gui_running")
     set guifont=Monaco:h14
     if has("gui_gtk2")   "GTK2
-        set guifont=Monaco\ 12,Monospace\ 12
+        "set guifont=Monaco\ 12,Monospace\ 12
+        set guifont=DroidSansMono_Nerd_Font:h11
     endif
     set guioptions-=T
     set guioptions+=e

@@ -312,7 +312,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'chazy/cscope_maps'
 
 " issues will hang when run git commit
-" Plug 'jaxbot/github-issues.vim'
+Plug 'sunbenxin/github-issues.vim'
 " Add plugins to &runtimepath
 
 " test
@@ -330,6 +330,14 @@ Plug 'vim-scripts/dbext.vim'
 Plug 'aquach/vim-http-client'
 Plug 'szw/vim-dict'
 Plug 'shumphrey/fugitive-gitlab.vim'
+
+" picture view
+Plug 'ashisha/image.vim'
+
+Plug 'leafgarland/typescript-vim'
+
+Plug 'ianva/vim-youdao-translater'
+Plug 'adelarsq/vim-hackernews'
 call plug#end()
 
 
@@ -419,7 +427,19 @@ if has_key(g:plugs, 'ale')
     let g:ale_linters = {
     \   'python': ['flake8'],
     \   'javascript': ['eslint'],
+    \   'vue': ['eslint'],
+    \   'typescript': ['tsserver', 'tslint'],
     \}
+
+    " npm install --global tslint
+    let g:ale_fixers = {
+    \   'python': ['flake8'],
+    \   'javascript': ['eslint'],
+    \   'vue': ['eslint'],
+    \   'typescript': ['prettier'],
+    \   'html': ['prettier']
+    \}
+    let g:ale_fix_on_save = 1
 
     " E501 -> 120 chars
     let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
@@ -493,10 +513,6 @@ endif
     if !empty(glob("~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"))
         let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
     endif
-    " new version
-    if !empty(glob("~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"))
-        let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
-    endif
 
     " 直接触发自动补全 insert模式下
     let g:ycm_key_invoke_completion = '<C-Space>'
@@ -506,7 +522,11 @@ endif
         \ 'gitcommit' : 1,
         \}
 " }}}
-
+"
+" github-issues {{{
+    let g:github_access_token = "4f9694d62089e7f37e1d310639bc621258bc0bec"
+    "let g:github_issues_no_omni
+" }}}
 
 " ultisnips {{{
     let g:UltiSnipsExpandTrigger       = "<tab>"
@@ -698,6 +718,7 @@ endif
     " <leader>gp maps to :Git push<CR>
     " let g:fugitive_browse_handlers = ['chrome']
     let g:fugitive_gitlab_domains = ['https://gitlab.p1staff.com', 'https://github.com']
+    let g:gitlab_api_keys = {'gitlab.p1staff.com': 'jzjjnGdEgz7mv65aeL7J'}
 " }}}
 
 " gitgutter {{{
@@ -787,8 +808,6 @@ endif
     " s/v 分屏打开文件
     let g:NERDTreeMapOpenSplit = 's'
     let g:NERDTreeMapOpenVSplit = 'v'
-    " fix Nerdtree ^G before folder and file names OSX terminal vim
-    let g:NERDTreeNodeDelimiter = "\u00a0"
 
 
     " nerdtreetabs
@@ -926,8 +945,12 @@ endif
 
 " dbext {{{
     let g:dbext_default_profile_mysql_tsp_dev = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_mysql_tsp_workflow_dev = 'type=MYSQL:user=tsp_workflow:passwd=P@ssw0rd!:dbname=tsp_workflow:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_mysql_kpi_dev = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_mysql_admin_dev = 'type=MYSQL:user=root:passwd=P@ssw0rd!:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_pg_admin_dev = 'type=PGSQL:user=postgres:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_pg_cfg_dev = 'type=PGSQL:user=tsp_config_center:dbname=tsp_config_center:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_pg_asset_dev = 'type=PGSQL:user=tsp_asset:passwd=P@ssw0rd!:dbname=tsp_asset:host=10.189.100.29:extra=-t'
     "let g:dbext_default_profile_mysql_tsp_prod = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.9.173.80:extra=-t'
     "let g:dbext_default_profile_mysql_kpi_prod = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.9.173.80:extra=-t'
     "let g:dbext_default_profile_mysql_admin_prod = 'type=MYSQL:user=root:passwd=bbr;p7Wia^:host=10.9.173.80:extra=-t'
@@ -954,9 +977,15 @@ endif
     " keys
     nnoremap <silent> <leader>es :Esformatter<CR>
     vnoremap <silent> <leader>es :EsformatterVisual<CR>
+    autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
 
 " }}}
 " ######### personal plugin #########
+" ianva/vim-youdao-translater {{{
+    vnoremap <silent> <leader>yw :<C-u>Ydv<CR>
+    nnoremap <silent> <leader>yw :<C-u>Ydc<CR>
+    noremap <leader>yd :<C-u>Yde<CR>
+" }}}
 " VMAIL
 "Plug 'danchoi/vmail'
 
@@ -966,35 +995,35 @@ endif
 "Plug 'linluk/vim-websearch'
 "
 " vimStock {{{
-"map ,60 :Vzdf<CR>  
-"map ,60<CR> :Vzdfd<CR>  
+"map ,60 :Vzdf<CR>
+"map ,60<CR> :Vzdfd<CR>
 "
-"map ,80 :Vzs<CR>  
-"map ,80<CR> :Vzsd<CR>  
+"map ,80 :Vzs<CR>
+"map ,80<CR> :Vzsd<CR>
 "
-"map ,zdf :Vzdf<CR>  
-"map ,zdf<CR> :Vzdfd<CR>  
+"map ,zdf :Vzdf<CR>
+"map ,zdf<CR> :Vzdfd<CR>
 "
-"map ,zs :Vzs<CR>  
-"map ,zs<CR> :Vzsd<CR>  
+"map ,zs :Vzs<CR>
+"map ,zs<CR> :Vzsd<CR>
 "
-"map ,hs :Vhs<CR>  
-"map ,hs<CR> :Vhsd<CR>  
+"map ,hs :Vhs<CR>
+"map ,hs<CR> :Vhsd<CR>
 "
-"map ,gn :Vgn<CR>  
-"map ,gn<CR> :Vgnd<CR>  
+"map ,gn :Vgn<CR>
+"map ,gn<CR> :Vgnd<CR>
 "
-"map ,hy :Vhy<CR>  
-"map ,hy<CR> :Vhyd<CR>  
+"map ,hy :Vhy<CR>
+"map ,hy<CR> :Vhyd<CR>
 "
 "map ,dde :Vdde<CR>
 "map ,dde<CR> :Vdded<CR>
 "
-"map ,r :Vr<CR>  
-"map ,run :Vrun<CR>  
+"map ,r :Vr<CR>
+"map ,run :Vrun<CR>
 "
-"map ,n :Vn<CR>  
-"map ,p :Vp<CR>  
+"map ,n :Vn<CR>
+"map ,p :Vp<CR>
 "
 "map ,j :resize -5<CR>
 "map ,k :resize +5<CR>
