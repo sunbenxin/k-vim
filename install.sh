@@ -1,6 +1,6 @@
 #!/bin/bash
 # ubuntu
-sudo apt-get install -y  ctags build-essential cmake python-dev nodejs  && pip install pyflakes && pip install pylint && pip install pep8 && npm install -g jslint && npm install jshint -g
+#sudo apt-get install -y  ctags build-essential cmake python-dev nodejs  && pip install pyflakes && pip install pylint && pip install pep8 && npm install -g jslint && npm install jshint -g
 
 # refer  spf13-vim bootstrap.sh`
 BASEDIR=$(dirname $0)
@@ -106,9 +106,9 @@ cd $CURRENT_DIR/bundle/YouCompleteMe/
 git submodule update --init --recursive
 if [ `which clang` ]   # check system clang
 then
-    python install.py --clang-completer --system-libclang   # use system clang
+    python3 install.py --clang-completer --system-libclang   # use system clang
 else
-    python install.py --clang-completer
+    python3 install.py --clang-completer
 fi
 
 echo "Install Done!"

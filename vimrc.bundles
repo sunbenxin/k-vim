@@ -17,7 +17,7 @@ filetype off " required! turn off
 " inspired by spf13, 自定义需要的插件集合
 if !exists('g:bundle_groups')
     " let g:bundle_groups=['python', 'javascript', 'markdown', 'html', 'css', 'tmux', 'beta', 'json', 'nginx', 'golang', 'ruby', 'less', 'php', 'coffeescript', 'shell']
-    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'beta', 'golang', 'shell', 'nginx', 'javascript', 'php', 'ruby', 'json']
+    let g:bundle_groups=['python', 'markdown', 'html', 'css', 'beta', 'golang', 'shell', 'nginx', 'javascript', 'php', 'ruby', 'json', 'less']
 endif
 
 " ----------------------------------------------------------------------------
@@ -198,7 +198,7 @@ if count(g:bundle_groups, 'python')
     "Plug 'hdima/python-syntax'
     "Plug 'hynek/vim-python-pep8-indent'
     "Plug 'Glench/Vim-Jinja2-Syntax'
-    let g:python_host_prog  = '/usr/local/bin/python2.7'
+    let g:python_host_prog  = '/usr/local/bin/python3.6'
 
     " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isort#installation
     " pip install isort
@@ -318,6 +318,7 @@ Plug 'sunbenxin/github-issues.vim'
 " test
 Plug 'sunbenxin/vimshell'
 Plug 'posva/vim-vue'
+Plug 'ap/vim-css-color'
 
 Plug 'millermedeiros/vim-esformatter'
 
@@ -338,6 +339,12 @@ Plug 'leafgarland/typescript-vim'
 
 Plug 'ianva/vim-youdao-translater'
 Plug 'adelarsq/vim-hackernews'
+"Plug 'vim-scripts/browser.vim'
+Plug 'vim-scripts/synmark.vim'
+"Plug 'joshhartigan/vim-reddit'
+"Plug 'erthalion/vim-reddit'
+" cant open issue
+Plug 'tarekbecker/vim-yaml-formatter'
 call plug#end()
 
 
@@ -424,16 +431,20 @@ if has_key(g:plugs, 'ale')
     " pip install flake8
     " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
     " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
+    let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
+
     let g:ale_linters = {
     \   'python': ['flake8'],
     \   'javascript': ['eslint'],
-    \   'vue': ['eslint'],
+    \   'vue': ['eslint','vls'],
     \   'typescript': ['tsserver', 'tslint'],
     \}
 
     " npm install --global tslint
+    "   'python': ['yapf', 'black', 'autopep8', 'isort', 'flake8',
+    "               'add_blank_lines_for_python_control_statements'],
     let g:ale_fixers = {
-    \   'python': ['flake8'],
+    \   'python': ['yapf'],
     \   'javascript': ['eslint'],
     \   'vue': ['eslint'],
     \   'typescript': ['prettier'],
@@ -951,6 +962,7 @@ endif
     let g:dbext_default_profile_pg_admin_dev = 'type=PGSQL:user=postgres:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_pg_cfg_dev = 'type=PGSQL:user=tsp_config_center:dbname=tsp_config_center:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_pg_asset_dev = 'type=PGSQL:user=tsp_asset:passwd=P@ssw0rd!:dbname=tsp_asset:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_mysql_localhost = 'type=MYSQL:user=root:dbname=ttoss:host=localhost:extra=-t'
     "let g:dbext_default_profile_mysql_tsp_prod = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.9.173.80:extra=-t'
     "let g:dbext_default_profile_mysql_kpi_prod = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.9.173.80:extra=-t'
     "let g:dbext_default_profile_mysql_admin_prod = 'type=MYSQL:user=root:passwd=bbr;p7Wia^:host=10.9.173.80:extra=-t'
@@ -982,8 +994,8 @@ endif
 " }}}
 " ######### personal plugin #########
 " ianva/vim-youdao-translater {{{
-    vnoremap <silent> <leader>yw :<C-u>Ydv<CR>
-    nnoremap <silent> <leader>yw :<C-u>Ydc<CR>
+    vnoremap <silent> <leader>ww :<C-u>Ydv<CR>
+    nnoremap <silent> <leader>ww :<C-u>Ydc<CR>
     noremap <leader>yd :<C-u>Yde<CR>
 " }}}
 " VMAIL

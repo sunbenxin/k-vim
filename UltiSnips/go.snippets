@@ -64,4 +64,138 @@ ${1}
 */
 endsnippet
 
+snippet ttmodel
+type ${1} struct {
+		ID          uint64      \`gorm:"primary_key" json:"id"\`
 
+		CreatedBy uint64       \`json:"created_by"\`
+		CreatedAt common.Time  \`json:"created_at"\`
+		UpdatedBy uint64       \`json:"updated_by"\`
+		UpdatedAt common.Time  \`json:"updated_at"\`
+		DeletedBy *uint64      \`json:"deleted_by"\`
+		DeletedAt *common.Time \`sql:"index" json:"deleted_at"\`
+
+		Creator         *iamRest.User                 \`gorm:"-" json:"creator,omitempty"\`
+		Updator         *iamRest.User                 \`gorm:"-" json:"updator,omitempty"\`
+}
+endsnippet
+
+snippet ttmf " description" <options>
+package db
+type ${1} struct {
+	ID                          uint64              \`gorm:"primary_key" json:"id"\`
+
+	CreatedBy uint64       \`json:"created_by"\`
+	CreatedAt common.Time  \`json:"created_at"\`
+	UpdatedBy uint64       \`json:"updated_by"\`
+	UpdatedAt common.Time  \`json:"updated_at"\`
+	DeletedBy *uint64      \`json:"deleted_by"\`
+	DeletedAt *common.Time `sql:"index" json:"deleted_at"`
+
+	Creator         *iamRest.User                 \`gorm:"-" json:"creator,omitempty"\`
+	Updator         *iamRest.User                 \`gorm:"-" json:"updator,omitempty"\`
+}
+
+type ${1/\w+\s*/\$0/g}Array []${1/\w+\s*/\$0/g}
+
+func (sa *${1/\w+\s*/\$0/g}Array) GetIDs() []uint64 {
+
+	var ids = []uint64{}
+
+	if sa == nil {
+		return ids
+	}
+
+	for _, s := range *sa {
+		if !common.IsUIntInArray(s.ID, ids) {
+			ids = append(ids, s.ID)
+		}
+	}
+
+	return ids
+}
+
+// GetUIDs 返回item中所有的user id
+func (item *${1/\w+\s*/\$0/g}) GetUIDs() (uids []uint64) {
+	if item == nil {
+		return
+	}
+	if !common.IsUIntInArray(item.CreatedBy, uids) {
+		uids = append(uids, item.CreatedBy)
+	}
+
+	if !common.IsUIntInArray(item.UpdatedBy, uids) {
+		uids = append(uids, item.UpdatedBy)
+	}
+	return
+}
+
+func (sa *${1/\w+\s*/\$0/g}Array) GetUIDs() []uint64 {
+
+	var uids = []uint64{}
+
+	if sa == nil {
+		return uids
+	}
+
+	for _, s := range *sa {
+		if !common.IsUIntInArray(s.CreatedBy, uids) {
+			uids = append(uids, s.CreatedBy)
+		}
+
+		if !common.IsUIntInArray(s.UpdatedBy, uids) {
+			uids = append(uids, s.UpdatedBy)
+		}
+	}
+	return uids
+}
+
+func (pra *${1/\w+\s*/\$0/g}Array) ToMap() map[uint64]*${1/\w+\s*/\$0/g} {
+	result := map[uint64]*${1/\w+\s*/\$0/g}{}
+
+	if pra == nil {
+		return result
+	}
+
+	for i, pr := range *pra {
+		if _, ok := result[pr.ID]; !ok {
+			result[pr.ID] = &(*pra)[i]
+		}
+	}
+
+	return result
+}
+
+// FillUsers 填充user信息
+func (s *${1/\w+\s*/\$0/g}) FillUsers(users map[uint64]*iamRest.User) {
+	if s == nil {
+		return
+	}
+
+	if u, ok := users[s.CreatedBy]; ok {
+		(*s).Creator = u
+	}
+
+	if u, ok := users[s.UpdatedBy]; ok {
+		(*s).Updator = u
+	}
+}
+
+func (sa *${1/\w+\s*/\$0/g}Array) FillUsers(users map[uint64]*iamRest.User) {
+	if sa == nil {
+		return
+	}
+
+	for i, s := range *sa {
+		if u, ok := users[s.CreatedBy]; ok {
+			(*sa)[i].Creator = u
+		}
+
+		if u, ok := users[s.UpdatedBy]; ok {
+			(*sa)[i].Updator = u
+		}
+
+	}
+	return
+}
+endsnippet
