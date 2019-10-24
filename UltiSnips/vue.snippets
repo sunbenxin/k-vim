@@ -198,9 +198,97 @@ snippet vstore
 endsnippet
 
 
-snippet tttable
+snippet ttlist
   <template>
     <div>
+<Row>
+      <Form
+        ref="form"
+        :model="search"
+        :rules="ruleForm"
+        label-position="right"
+        :label-width="80"
+        inline
+      >
+        <Row>
+          <FormItem prop="status" label="状态">
+            <CheckboxGroup size="large" v-model="form.status" class="m-l-30">
+              <Checkbox
+                v-for="item in checkStatusArray"
+                :item="item"
+                :key="item.label"
+                :label="item.label"
+                >{{ item.value }}
+              </Checkbox>
+            </CheckboxGroup>
+          </FormItem>
+        </Row>
+        <Row>
+          <FormItem prop="period" label="筛选">
+            <strong class="m-l-30">日期</strong>
+            <Select v-model="period" class="width100" style="margin-left:10px">
+              <Option
+                v-for="(item, index) in periodList"
+                :value="item.value"
+                :key="index"
+                >{{ item.label }}</Option
+              >
+            </Select>
+            <span style="margin-left: 10px" v-if="period !== 'custom'"
+              >{{ getDateString(search.start_date) }} 至
+              {{ getDateString(search.end_date) }}</span
+            >
+            <div
+              style="display:inline-block;margin-left: 10px"
+              v-if="period === 'custom'"
+            >
+              <DatePicker
+                type="date"
+                placeholder="开始日期"
+                v-model="search.start_date"
+                class="width120"
+              >
+              </DatePicker>
+              至
+              <DatePicker
+                type="date"
+                placeholder="截止日期"
+                v-model="search.end_date"
+                class="width120"
+              >
+              </DatePicker>
+            </div>
+          </FormItem>
+
+          <FormItem prop="purchase_item_type" label="采购类别">
+            <Select
+              v-model="search.purchase_item_type"
+              style="margin-left:10px;width:100px"
+            >
+              <Option
+                v-for="item in purchaseTypeList"
+                :key="item.value"
+                :value="item.value"
+                >{{ item.label }}</Option
+              >
+            </Select>
+          </FormItem>
+
+          <FormItem prop="keyword" label="关键词">
+            <Input
+              clearable
+              search
+              style="margin-left:10px;width:200px"
+              v-model="search.keyword"
+              placeholder="名称或采购编号"
+            />
+          </FormItem>
+          <Button type="error" style="margin-left:30px" @click="clearSearch"
+            >清空</Button
+          >
+        </Row>
+      </Form>
+    </Row>
       <Page
         class="m-20"
         :total="total"
@@ -235,12 +323,51 @@ import { handleOperationRes } from '../../libs/util'
     export default{
   data() {
     return {
+      checkStatusArray: [
+        { label: 'draft,submitted', value: '进行中' },
+        { label: 'recalled', value: '已撤销' },
+        { label: 'finished', value: '合同已签署' }
+      ],
+      period: '1m',
+      periodList: [
+        {
+          value: '1m',
+          label: '本月'
+        },
+        {
+          value: '3m',
+          label: '本季度'
+        },
+        {
+          value: '1y',
+          label: '本年'
+        },
+        {
+          value: 'custom',
+          label: '自定义'
+        }
+      ],
         total:0,
         currentPageNum:1,
         pageSize:20,
         loading:false,
         ${1/\w+\s*/\$0/g}Data:[],
-        search:null
+        search:{
+            start_date:null,
+            end_date:null,
+            keyword:null
+            },
+      ruleForm: {
+        status: [
+          {
+            required: true,
+            type: 'array',
+            min: 1,
+            message: '请至少选中一个状态',
+            trigger: 'blur'
+          }
+        ]
+      }
     };
     },
     computed:{
@@ -309,10 +436,23 @@ import { handleOperationRes } from '../../libs/util'
         }
     },
     watch:{
-        search:{
-            handler(val){
-                }
-            }
+    search: {
+      handler (val) {
+        this.handleSubmit('form')
+      },
+      deep: true
+    },
+    period: {
+      handler (val) {
+        this.setDate()
+      }
+    },
+    route: {
+      handler (val) {
+        this.getPurchaseRequestList(this.$route.query)
+      },
+      deep: true
+    },
         },
     created(){
         this.handleSearch()
@@ -324,4 +464,145 @@ import { handleOperationRes } from '../../libs/util'
   <style scoped>
 
   </style>
+endsnippet
+
+snippet ttview
+<template>
+    <div class="p-20">
+      <h2>查看供应商</h2>
+      <Divider></Divider>
+      <Table size="small"
+             class="m-20"
+             :data="summary"
+             :loading="loading"
+             border
+             :columns="columns">
+      </Table>
+    </div>
+</template>
+
+<script>
+import { getSupplierApi } from '@/api/data'
+import { handleOperationRes } from '../../libs/util'
+export default {
+  name: 'supplierView',
+  data: function () {
+    return {
+      loading: false,
+      form: {
+        name: '',
+        contact_name: '',
+        email: '',
+        phone: '',
+        address: '',
+        website: '',
+        description: '',
+        accounts: []
+      },
+      rules: {
+        name: [{ required: true, message: '请输入供应商名称', trigger: 'blur' }],
+        description: [{ required: true, message: '请输入供应商描述', trigger: 'blur' }]
+      },
+      columns: [{
+        title: '项目',
+        key: 'item',
+        render: (h, params) => {
+          return h('strong', {}, params.row.item)
+        }
+      }, {
+        title: '值',
+        key: 'value',
+        render: (h, params) => {
+          if (typeof params.row.value === 'object') {
+            if (params.row.value.link) {
+              return h('a', {
+                attrs: {
+                  target: '_blank',
+                  href: params.row.value.link
+                }
+              }, params.row.value.text)
+            } else {
+              return h('strong', {
+                class: params.row.value.class,
+                style: params.row.value.style
+              }, params.row.value.text)
+            }
+          } else {
+            return h('span', {}, params.row.value)
+          }
+        }
+      }],
+      supplier: null
+    }
+  },
+  computed: {
+    supplierId () {
+      return parseInt(this.$route.params.supplier_id)
+    },
+    summary () {
+      if (!this.supplier) {
+        return []
+      }
+
+      return [{
+        item: '供应商名称',
+        value: this.supplier.name
+      }, {
+        item: '联系人',
+        value: this.supplier.contact_name
+      }, {
+        item: '邮件',
+        value: this.supplier.email ? {
+          text: this.supplier.email,
+          link: 'mailto:' + this.supplier.email
+        } : '(无)'
+      }, {
+        item: '电话',
+        value: this.supplier.phone
+      }, {
+        item: '地址',
+        value: this.supplier.address
+      }, {
+        item: '网站',
+        value: this.supplier.website ? {
+          text: this.supplier.website,
+          link: !/^http(|s):\/\//.test(this.supplier.website.toLowerCase()) ? 'http://' + this.supplier.website : this.supplier.website
+        } : '(无)'
+      }, {
+        item: '供应商描述',
+        value: this.supplier.description
+      }]
+    }
+  },
+  methods: {
+    getSupplier () {
+      getSupplierApi(this.supplierId).then(res => {
+        this.loading = false
+        res = res.data
+        handleOperationRes(this, res, false, null)
+        if (res.meta.code === 0) {
+          this.supplier = res.data.supplier
+          let self = this
+          let items = ['name', 'description', 'contact_name', 'email', 'phone', 'address', 'website', 'accounts']
+          items.forEach(item => {
+            if (self.supplier[item]) {
+              self.form[item] = self.supplier[item]
+            } else {
+              self.form[item] = (item === 'accounts') ? [] : ''
+            }
+          })
+        }
+      })
+      this.loading = true
+    }
+  },
+  mounted () {
+    this.getSupplier()
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
 endsnippet
