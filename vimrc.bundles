@@ -433,62 +433,45 @@ call plug#end()
 
 
 " ale {{{
-"if has_key(g:plugs, 'ale')
-"    " pip install flake8
-"    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
-"    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
-"    let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
-"
-"    let g:ale_linters = {
-"    \   'javascript': ['eslint'],
-"    \   'vue': ['eslint','vls'],
-"    \   'typescript': ['tsserver', 'tslint'],
-"    \}
-"
-"    " npm install --global tslint
-"    "   'python': ['yapf', 'black', 'autopep8', 'isort', 'flake8',
-"    "               'add_blank_lines_for_python_control_statements'],
-"    let g:ale_fixers = {
-"    \   'javascript': ['eslint'],
-"    \   'vue': ['eslint'],
-"    \   'typescript': ['prettier'],
-"    \   'html': ['prettier']
-"    \}
-"    let g:ale_fix_on_save = 1
-"
-"    " E501 -> 120 chars
-"    "let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
-"    " --ignore=E225,E124,E712,E116
-"    "let g:ale_python_black_options="--line-length 120"
-"
-"    let g:ale_sign_error = '>>'
-"    let g:ale_sign_warning = '>'
-"
-"    let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
-"    let g:ale_echo_msg_error_str = 'E'
-"    let g:ale_echo_msg_warning_str = 'W'
-"    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-"
-"    nmap <silent> <Leader>ep <Plug>(ale_previous_wrap)
-"    nmap <silent> <Leader>en <Plug>(ale_next_wrap)
-"
-"    nnoremap <silent> <Leader>ec :ALEToggle<CR>
-"
-"    " troggle quickfix list
-"    function! ToggleErrors()
-"        let old_last_winnr = winnr('$')
-"        lclose
-"        if old_last_winnr == winnr('$')
-"            " Nothing was closed, open syntastic_error location panel
-"            lopen
-"        endif
-"    endfunction
-"    nnoremap <Leader>s :call ToggleErrors()<cr>
-"
-"    let g:ale_set_highlights = 1
-"    highlight clear ALEErrorSign
-"    highlight clear ALEWarningSign
-"endif
+if has_key(g:plugs, 'ale')
+    " pip install flake8
+    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
+    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
+    let g:ale_linters = {
+    \   'python': ['flake8'],
+    \   'javascript': ['eslint'],
+    \}
+
+    let g:ale_python_flake8_options="--ignore=E121,E123,E126,E226,E24,E704,W503 --max-line-length=120"
+
+    let g:ale_sign_error = '>>'
+    let g:ale_sign_warning = '>'
+
+    let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+    let g:ale_echo_msg_error_str = 'E'
+    let g:ale_echo_msg_warning_str = 'W'
+    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+    nmap <silent> <Leader>ep <Plug>(ale_previous_wrap)
+    nmap <silent> <Leader>en <Plug>(ale_next_wrap)
+
+    nnoremap <silent> <Leader>ec :ALEToggle<CR>
+
+    " troggle quickfix list
+    function! ToggleErrors()
+        let old_last_winnr = winnr('$')
+        lclose
+        if old_last_winnr == winnr('$')
+            " Nothing was closed, open syntastic_error location panel
+            lopen
+        endif
+    endfunction
+    nnoremap <Leader>s :call ToggleErrors()<cr>
+
+    let g:ale_set_highlights = 1
+    highlight clear ALEErrorSign
+    highlight clear ALEWarningSign
+endif
 
 " }}}
 
