@@ -1,0 +1,84 @@
+snippet  router
+  {
+        name: '$1s',
+        path: '$1s/',
+        meta: {
+          changed_title: false,
+          title: '$2'
+        },
+        component: () => import('@/view/$1s/parent'),
+        children: [{
+          name: '$1List',
+          path: 'list/',
+          meta: {
+            title: '$2列表'
+          },
+          component: () => import('@/view/$1s/list')
+        }, {
+          name: '$1Create',
+          path: 'create/',
+          meta: {
+            title: '创建$2'
+          },
+          component: () => import('@/view/$1s/create')
+        }, {
+          name: '$1View',
+          path: ':$1_id/detail',
+          meta: {
+            title: '查看$2'
+          },
+          component: () => import('@/view/$1s/view')
+        }, {
+          name: '$1Edit',
+          path: ':$1_id/edit',
+          meta: {
+            title: '编辑$2'
+          },
+          component: () => import('@/view/$1s/edit')
+        }]
+      }
+endsnippet
+snippet api
+/* 获取$2 */
+export const get$1Api = (${1/\w+\s*/\l$0/g}Id) => {
+  return axios.request({
+    url: \`/api/${1/\w+\s*/\l$0/g}s/${${1/\w+\s*/\l$0/g}Id}\`,
+    method: 'get'
+  })
+}
+
+/* 列出$2 */
+export const get$1sApi = (params) => {
+  return axios.request({
+    url: '/api/${1/\w+\s*/\l$0/g}s',
+    method: 'get',
+    params: params
+  })
+}
+
+/* 创建$2 */
+export const create$1Api = (data) => {
+  return axios.request({
+    url: '/api/${1/\w+\s*/\l$0/g}s',
+    method: 'post',
+    data: data
+  })
+}
+
+/* 编辑$2 */
+export const edit$1Api = (${1/\w+\s*/\l$0/g}Id, data) => {
+  return axios.request({
+    url: \`/api/${1/\w+\s*/\l$0/g}s/${${1/\w+\s*/\l$0/g}Id}\`,
+    method: 'put',
+    data: data
+  })
+}
+
+/** 删除$2 **/
+export const delete$1Api = (${1/\w+\s*/\l$0/g}ID) => {
+  return axios.request({
+    url: \`/api/${1/\w+\s*/\l$0/g}s/${${1/\w+\s*/\l$0/g}ID}\`,
+    method: 'delete'
+  })
+}
+endsnippet

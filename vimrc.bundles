@@ -198,14 +198,20 @@ if count(g:bundle_groups, 'python')
     "Plug 'hdima/python-syntax'
     "Plug 'hynek/vim-python-pep8-indent'
     "Plug 'Glench/Vim-Jinja2-Syntax'
-    let g:python_host_prog  = '/usr/local/bin/python3.6'
+    let g:python_host_prog  = '/usr/local/bin/python2.7'
 
     " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isort#installation
     " pip install isort
     Plug 'fisadev/vim-isort'
     " Shift-V 上下选中, ctrl + i 规范化
     Plug 'python-mode/python-mode', { 'branch': 'develop' }
+    let g:pymode_options_max_line_length=120
+    let g:pymode_lint_ignore = ["E999","W"]
     let g:vim_isort_map = '<C-i>'
+    let g:pymode_virtualenv = 1
+    let g:pymode_python='python'
+    let g:pymode_lint_on_write = 0
+    let g:pymode_lint_checkers = ['pep8', 'mccabe']
 endif
 
 if count(g:bundle_groups, 'php')
@@ -351,139 +357,138 @@ call plug#end()
 " ################### 基础 ######################
 
 " syntastic {{{
-if has_key(g:plugs, 'syntastic')
-    " dependence
-    " 1. shellcheck `brew install shellcheck` https://github.com/koalaman/shellcheck
-
-    let g:syntastic_error_symbol='>>'
-    let g:syntastic_warning_symbol='>'
-    let g:syntastic_check_on_open=1
-    let g:syntastic_check_on_wq=0
-    let g:syntastic_enable_highlighting=1
-
-    " checkers
-    " python
-    " pip install flake8
-    let g:syntastic_python_checkers=['flake8', ] " 使用pyflakes,速度比pylint快
-    let g:syntastic_python_flake8_options='--ignore=E501,E225,E124,E712,E116,E131'
-
-    " javascript
-    let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-    let g:syntastic_html_checkers=['tidy', 'jshint']
-    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
-    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
-    let g:syntastic_javascript_checkers = ['eslint']
-
-    " to see error location list
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_enable_signs = 1
-    let g:syntastic_auto_loc_list = 0
-    let g:syntastic_auto_jump = 0
-    let g:syntastic_loc_list_height = 5
-
-    function! ToggleErrors()
-        let old_last_winnr = winnr('$')
-        lclose
-        if old_last_winnr == winnr('$')
-            " Nothing was closed, open syntastic_error location panel
-            Errors
-        endif
-    endfunction
-    nnoremap <Leader>s :call ToggleErrors()<cr>
-
-    " ,en ,ep to jump between errors
-    function! <SID>LocationPrevious()
-    try
-        lprev
-    catch /^Vim\%((\a\+)\)\=:E553/
-        llast
-    endtry
-    endfunction
-
-    function! <SID>LocationNext()
-    try
-        lnext
-    catch /^Vim\%((\a\+)\)\=:E553/
-        lfirst
-    endtry
-    endfunction
-
-    nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
-    nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
-    nmap <silent> <Leader>ep    <Plug>LocationPrevious
-    nmap <silent> <Leader>en    <Plug>LocationNext
-
-    " 修改高亮的背景色, 适应主题
-    highlight SyntasticErrorSign guifg=white guibg=black
-
-    " 禁止插件检查java
-    " thanks to @marsqing, see https://github.com/wklken/k-vim/issues/164
-    let g:syntastic_mode_map = {'mode': 'active', 'passive_filetypes': ['java'] }
-
-    " 关闭syntastic语法检查, 鼠标复制代码时用到, 防止把错误标志给复制了
-    nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
-endif
+"if has_key(g:plugs, 'syntastic')
+"    " dependence
+"    " 1. shellcheck `brew install shellcheck` https://github.com/koalaman/shellcheck
+"
+"    let g:syntastic_error_symbol='>>'
+"    let g:syntastic_warning_symbol='>'
+"    let g:syntastic_check_on_open=1
+"    let g:syntastic_check_on_wq=0
+"    let g:syntastic_enable_highlighting=1
+"
+"    " checkers
+"    " python
+"    " pip install flake8
+"    let g:syntastic_python_checkers=['flake8', ] " 使用pyflakes,速度比pylint快
+"    let g:syntastic_python_flake8_options='--ignore=E501,E225,E124,E712,E116,E131'
+"
+"    " javascript
+"    let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+"    let g:syntastic_html_checkers=['tidy', 'jshint']
+"    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
+"    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
+"    let g:syntastic_javascript_checkers = ['eslint']
+"
+"    " to see error location list
+"    let g:syntastic_always_populate_loc_list = 1
+"    let g:syntastic_enable_signs = 1
+"    let g:syntastic_auto_loc_list = 0
+"    let g:syntastic_auto_jump = 0
+"    let g:syntastic_loc_list_height = 5
+"
+"    function! ToggleErrors()
+"        let old_last_winnr = winnr('$')
+"        lclose
+"        if old_last_winnr == winnr('$')
+"            " Nothing was closed, open syntastic_error location panel
+"            Errors
+"        endif
+"    endfunction
+"    nnoremap <Leader>s :call ToggleErrors()<cr>
+"
+"    " ,en ,ep to jump between errors
+"    function! <SID>LocationPrevious()
+"    try
+"        lprev
+"    catch /^Vim\%((\a\+)\)\=:E553/
+"        llast
+"    endtry
+"    endfunction
+"
+"    function! <SID>LocationNext()
+"    try
+"        lnext
+"    catch /^Vim\%((\a\+)\)\=:E553/
+"        lfirst
+"    endtry
+"    endfunction
+"
+"    nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
+"    nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
+"    nmap <silent> <Leader>ep    <Plug>LocationPrevious
+"    nmap <silent> <Leader>en    <Plug>LocationNext
+"
+"    " 修改高亮的背景色, 适应主题
+"    highlight SyntasticErrorSign guifg=white guibg=black
+"
+"    " 禁止插件检查java
+"    " thanks to @marsqing, see https://github.com/wklken/k-vim/issues/164
+"    let g:syntastic_mode_map = {'mode': 'active', 'passive_filetypes': ['java'] }
+"
+"    " 关闭syntastic语法检查, 鼠标复制代码时用到, 防止把错误标志给复制了
+"    nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
+"endif
 " }}}
 
 
 " ale {{{
-if has_key(g:plugs, 'ale')
-    " pip install flake8
-    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
-    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
-    let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
-
-    let g:ale_linters = {
-    \   'python': ['flake8'],
-    \   'javascript': ['eslint'],
-    \   'vue': ['eslint','vls'],
-    \   'typescript': ['tsserver', 'tslint'],
-    \}
-
-    " npm install --global tslint
-    "   'python': ['yapf', 'black', 'autopep8', 'isort', 'flake8',
-    "               'add_blank_lines_for_python_control_statements'],
-    let g:ale_fixers = {
-    \   'python': ['yapf'],
-    \   'javascript': ['eslint'],
-    \   'vue': ['eslint'],
-    \   'typescript': ['prettier'],
-    \   'html': ['prettier']
-    \}
-    let g:ale_fix_on_save = 1
-
-    " E501 -> 120 chars
-    let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
-    " --ignore=E225,E124,E712,E116
-
-    let g:ale_sign_error = '>>'
-    let g:ale_sign_warning = '>'
-
-    let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
-    let g:ale_echo_msg_error_str = 'E'
-    let g:ale_echo_msg_warning_str = 'W'
-    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-    nmap <silent> <Leader>ep <Plug>(ale_previous_wrap)
-    nmap <silent> <Leader>en <Plug>(ale_next_wrap)
-
-    nnoremap <silent> <Leader>ec :ALEToggle<CR>
-
-    " troggle quickfix list
-    function! ToggleErrors()
-        let old_last_winnr = winnr('$')
-        lclose
-        if old_last_winnr == winnr('$')
-            " Nothing was closed, open syntastic_error location panel
-            lopen
-        endif
-    endfunction
-    nnoremap <Leader>s :call ToggleErrors()<cr>
-
-    let g:ale_set_highlights = 1
-    highlight clear ALEErrorSign
-    highlight clear ALEWarningSign
-endif
+"if has_key(g:plugs, 'ale')
+"    " pip install flake8
+"    " npm install -g eslint eslint-plugin-standard eslint-plugin-promise eslint-config-standard
+"    " npm install -g eslint-plugin-import eslint-plugin-node eslint-plugin-html babel-eslint
+"    let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
+"
+"    let g:ale_linters = {
+"    \   'javascript': ['eslint'],
+"    \   'vue': ['eslint','vls'],
+"    \   'typescript': ['tsserver', 'tslint'],
+"    \}
+"
+"    " npm install --global tslint
+"    "   'python': ['yapf', 'black', 'autopep8', 'isort', 'flake8',
+"    "               'add_blank_lines_for_python_control_statements'],
+"    let g:ale_fixers = {
+"    \   'javascript': ['eslint'],
+"    \   'vue': ['eslint'],
+"    \   'typescript': ['prettier'],
+"    \   'html': ['prettier']
+"    \}
+"    let g:ale_fix_on_save = 1
+"
+"    " E501 -> 120 chars
+"    "let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
+"    " --ignore=E225,E124,E712,E116
+"    "let g:ale_python_black_options="--line-length 120"
+"
+"    let g:ale_sign_error = '>>'
+"    let g:ale_sign_warning = '>'
+"
+"    let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+"    let g:ale_echo_msg_error_str = 'E'
+"    let g:ale_echo_msg_warning_str = 'W'
+"    let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"
+"    nmap <silent> <Leader>ep <Plug>(ale_previous_wrap)
+"    nmap <silent> <Leader>en <Plug>(ale_next_wrap)
+"
+"    nnoremap <silent> <Leader>ec :ALEToggle<CR>
+"
+"    " troggle quickfix list
+"    function! ToggleErrors()
+"        let old_last_winnr = winnr('$')
+"        lclose
+"        if old_last_winnr == winnr('$')
+"            " Nothing was closed, open syntastic_error location panel
+"            lopen
+"        endif
+"    endfunction
+"    nnoremap <Leader>s :call ToggleErrors()<cr>
+"
+"    let g:ale_set_highlights = 1
+"    highlight clear ALEErrorSign
+"    highlight clear ALEWarningSign
+"endif
 
 " }}}
 
@@ -509,9 +514,10 @@ endif
     "let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
 
     " 跳转到定义处, 分屏打开
-    let g:ycm_goto_buffer_command = 'horizontal-split'
+    let g:ycm_goto_buffer_command = 'same-buffer'
     let g:ycm_register_as_syntastic_checker = 0
     " nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
+    let g:ycm_autoclose_preview_window_after_completion=1
     nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
     nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
 
@@ -912,7 +918,6 @@ endif
 
 
 " pythonsyntax {{{
-    let python_highlight_all = 1
 " }}}
 
 " piv {{{
@@ -957,7 +962,8 @@ endif
 " dbext {{{
     let g:dbext_default_profile_mysql_tsp_dev = 'type=MYSQL:user=tsp_workbench:passwd=P@ssw0rd!:dbname=tsp_workbench:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_mysql_tsp_workflow_dev = 'type=MYSQL:user=tsp_workflow:passwd=P@ssw0rd!:dbname=tsp_workflow:host=10.189.100.29:extra=-t'
-    let g:dbext_default_profile_mysql_kpi_dev = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.189.100.29:extra=-t'
+    let g:dbext_default_profile_mysql_kpi_dev = 'type=MYSQL:user=tsp_kpi:passwd=P@ssw0rd!:dbname=tsp_kpi:host=10.189.100.29:port:2121:extra=-t'
+    let g:dbext_default_profile_mysql_iam_dev = 'type=MYSQL:user=tsp_iam:passwd=P@ssw0rd!:dbname=tsp_iam:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_mysql_admin_dev = 'type=MYSQL:user=root:passwd=P@ssw0rd!:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_pg_admin_dev = 'type=PGSQL:user=postgres:host=10.189.100.29:extra=-t'
     let g:dbext_default_profile_pg_cfg_dev = 'type=PGSQL:user=tsp_config_center:dbname=tsp_config_center:host=10.189.100.29:extra=-t'
@@ -978,9 +984,11 @@ endif
     " pip install yapf
     " python code format
     " format all file
-    autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr>
+    "autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr>
+    autocmd FileType python nnoremap <leader>y :PymodeLint<Cr>
+    autocmd FileType python nnoremap <leader>yf :PymodeLintAuto<Cr>
     " format select block
-    autocmd FileType python vnoremap <leader>y :!yapf<Cr>
+    "autocmd FileType python vnoremap <leader>y :!yapf<Cr>
 
     "Plug 'posva/vim-vue'
 

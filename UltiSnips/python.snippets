@@ -174,3 +174,37 @@ snippet dk "api doc"
         code:
 
 endsnippet
+
+snippet router
+url(r'^${1/\w+\s*/\l$0/g}s$', $1View.as_view()),
+url(r'^${1/\w+\s*/\l$0/g}s/(?P<rid>\d+)/$', $1View.as_view()),
+endsnippet
+
+
+snippet view
+class $1View(View):
+    def get(self, request, *args, **kwargs):
+        return api_response(0, "", {})
+
+    def put(self, request, *args, **kwargs):
+        return api_response(0, "", {})
+
+    def delete(self, request, *args, **kwargs):
+        return api_response(0, "", {})
+
+    def post(self, request, *args, **kwargs):
+        res = {}
+        ret_code = 40001
+        err_msg = None
+        calling_station = get_calling_station(request)
+        try:
+            post_data = json.loads(request.body)
+        except:
+            post_data = {}
+            err_msg = u'request body is invalid'
+        return api_response(ret_code, err_msg, res)
+
+    def list(self, request, *args, **kwargs):
+        return api_response(0, "", {})
+
+endsnippet

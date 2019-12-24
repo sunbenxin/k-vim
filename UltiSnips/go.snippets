@@ -64,7 +64,7 @@ ${1}
 */
 endsnippet
 
-snippet ttmodel
+snippet model
 type ${1} struct {
 		ID          uint64      \`gorm:"primary_key" json:"id"\`
 
@@ -80,7 +80,338 @@ type ${1} struct {
 }
 endsnippet
 
-snippet ttmf " description" <options>
+
+
+snippet srv
+
+package service
+
+// Get${1/\w+\s*/\$0/g}
+func (svc *Service) Get$1(${1/\w+\s*/\l$0/g}ID uint64) (*db.${1/\w+\s*/\$0/g}, error) {
+	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}ID)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+
+	${1/\w+\s*/\l$0/g}, err = svc.Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g}, true)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+	}
+
+	return ${1/\w+\s*/\l$0/g}, nil
+}
+
+type ${1/\w+\s*/\$0/g}Param struct {
+	Description  *string    \`json:"description"\`
+}
+
+// Create${1/\w+\s*/\$0/g}
+func (svc *Service) Create${1/\w+\s*/\$0/g}(param ${1/\w+\s*/\$0/g}Param, login *rest.LoginUser) (*db.${1/\w+\s*/\$0/g}, error) {
+	now := common.Now()
+
+	${1/\w+\s*/\l$0/g} := db.${1/\w+\s*/\$0/g}{
+//	Xxxx:     param.Xxx,
+
+		CreatedAt:   now,
+		CreatedBy:   login.ID,
+		UpdatedAt:   now,
+		UpdatedBy:   login.ID,
+	}
+
+	created, err := svc.DB.${1/\w+\s*/\$0/g}.Create(&${1/\w+\s*/\l$0/g})
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+
+	created, err = svc.Fill${1/\w+\s*/\$0/g}With(created, true)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+	}
+
+	return created, nil
+}
+
+// Update${1/\w+\s*/\$0/g}
+func (svc *Service) Update${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id uint64, param ${1/\w+\s*/\$0/g}Param, login *rest.LoginUser) (*db.${1/\w+\s*/\$0/g}, error) {
+
+	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}Id)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+	if ${1/\w+\s*/\l$0/g} == nil {
+		return nil, &rest.CError{Message: "${1/\w+\s*/\l$0/g} does not exist", Code: rest.RequestDataNotExisted}
+	}
+
+	now := common.Now()
+
+	//${1/\w+\s*/\l$0/g}.Xxx     = param.Xxx
+	${1/\w+\s*/\l$0/g}.UpdatedAt   = now
+	${1/\w+\s*/\l$0/g}.UpdatedBy   = login.ID
+
+	updated, err := svc.DB.${1/\w+\s*/\$0/g}.Update(${1/\w+\s*/\l$0/g})
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+
+	updated, err = svc.Fill${1/\w+\s*/\$0/g}With(updated,  true)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+	}
+
+	return updated, nil
+}
+
+// Delete${1/\w+\s*/\$0/g}
+func (svc *Service) Delete${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id uint64) (*db.${1/\w+\s*/\$0/g}, error) {
+
+	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}Id)
+
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+
+	if ${1/\w+\s*/\l$0/g} == nil {
+		return nil, &rest.CError{Message: "${1/\w+\s*/\l$0/g} does not exist", Code: rest.RequestDataNotExisted}
+	}
+
+	${1/\w+\s*/\l$0/g}, err = svc.Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g},  true)
+	if err != nil {
+		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+	}
+
+	return ${1/\w+\s*/\l$0/g}, svc.DB.${1/\w+\s*/\$0/g}.Delete(${1/\w+\s*/\l$0/g})
+
+}
+
+// Fill${1/\w+\s*/\$0/g}With
+func (svc *Service) Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g} *db.${1/\w+\s*/\$0/g},  withUser bool) (*db.${1/\w+\s*/\$0/g}, error) {
+	if ${1/\w+\s*/\l$0/g} == nil || !withUser {
+		return ${1/\w+\s*/\l$0/g}, nil
+	}
+
+	${1/\w+\s*/\l$0/g}s := db.${1/\w+\s*/\$0/g}Array{}
+	${1/\w+\s*/\l$0/g}s = append(${1/\w+\s*/\l$0/g}s, *${1/\w+\s*/\l$0/g})
+	err := svc.Fill${1/\w+\s*/\$0/g}sWith(&${1/\w+\s*/\l$0/g}s,  withUser)
+	if err != nil {
+		return ${1/\w+\s*/\l$0/g}, err
+	}
+
+	return &${1/\w+\s*/\l$0/g}s[0], nil
+}
+
+// Fill${1/\w+\s*/\$0/g}sWith
+func (svc *Service) Fill${1/\w+\s*/\$0/g}sWith(${1/\w+\s*/\l$0/g}s *db.${1/\w+\s*/\$0/g}Array,  withUser bool) error {
+	if ${1/\w+\s*/\l$0/g}s == nil {
+		return nil
+	}
+
+	if withUser {
+		userIDs := ${1/\w+\s*/\l$0/g}s.GetUIDs()
+		if len(userIDs) > 0 {
+			users, err := svc.BatchGetUserMap(userIDs)
+			if err != nil {
+				return err
+			}
+			${1/\w+\s*/\l$0/g}s.FillUsers(users)
+		}
+	}
+
+	return nil
+}
+
+func (svc *Service) List$1s(req *db.List$1sReq) (*db.$1Array, uint64, error) {
+	${1/\w+\s*/\l$0/g}s, total, err := svc.DB.$1.List(req)
+	if err != nil {
+		return nil, total, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	}
+
+	if ${1/\w+\s*/\l$0/g}s != nil {
+		err = svc.Fill$1sWith(${1/\w+\s*/\l$0/g}s, true)
+		if err != nil {
+			return nil, total, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+		}
+	}
+	return ${1/\w+\s*/\l$0/g}s, total, nil
+}
+endsnippet
+
+snippet ctl
+package controller
+
+// Get$1
+func (ctl *Controller) Get${1/\w+\s*/\$0/g}(c *gin.Context) {
+
+	${1/\w+\s*/\l$0/g}ID, err := strconv.ParseUint(c.Param("${1/\w+\s*/\l$0/g}_id"), 10, 64)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	${1/\w+\s*/\l$0/g}, err := ctl.Service.Get${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}ID)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
+		return
+	}
+
+	c.JSON(http.StatusOK, &rest.BaseResp{
+		Meta: &rest.Meta{
+			Code: rest.CodeSuccess,
+		},
+		Data: struct {
+			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"${1/\w+\s*/\l$0/g}"\`
+		}{
+			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
+		},
+	})
+
+}
+
+// Create${1/\w+\s*/\$0/g}
+func (ctl *Controller) Create${1/\w+\s*/\$0/g}(c *gin.Context) {
+
+	param := service.${1/\w+\s*/\$0/g}Param{}
+
+	if err := c.ShouldBindJSON(&param); err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	logUser := GetLoginUser(c)
+	${1/\w+\s*/\l$0/g}, err := ctl.Service.Create${1/\w+\s*/\$0/g}(param, logUser)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
+		return
+	}
+
+	c.JSON(http.StatusOK, &rest.BaseResp{
+		Meta: &rest.Meta{
+			Code: rest.CodeSuccess,
+		},
+		Data: struct {
+			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"${1/\w+\s*/\l$0/g}"\`
+		}{
+			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
+		},
+	})
+
+}
+
+// Update${1/\w+\s*/\$0/g}
+func (ctl *Controller) Update${1/\w+\s*/\$0/g}(c *gin.Context) {
+
+	${1/\w+\s*/\l$0/g}Id, err := strconv.ParseUint(c.Param("${1/\w+\s*/\l$0/g}_id"), 10, 64)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	param := service.${1/\w+\s*/\$0/g}Param{}
+
+	if err := c.ShouldBindJSON(&param); err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	logUser := GetLoginUser(c)
+
+	${1/\w+\s*/\l$0/g}, err := ctl.Service.Update${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id, param, logUser)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
+		return
+	}
+
+	c.JSON(http.StatusOK, &rest.BaseResp{
+		Meta: &rest.Meta{
+			Code: rest.CodeSuccess,
+		},
+		Data: struct {
+			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"${1/\w+\s*/\l$0/g}"\`
+		}{
+			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
+		},
+	})
+
+}
+
+// Delete${1/\w+\s*/\$0/g}
+func (ctl *Controller) Delete${1/\w+\s*/\$0/g}(c *gin.Context) {
+	// params
+	${1/\w+\s*/\l$0/g}ID, err := strconv.ParseUint(c.Param("${1/\w+\s*/\l$0/g}_id"), 10, 64)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	${1/\w+\s*/\l$0/g}, err := ctl.Service.Delete${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}ID)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
+		return
+	}
+
+	c.JSON(http.StatusOK, &rest.BaseResp{
+		Meta: &rest.Meta{
+			Code: rest.CodeSuccess,
+		},
+		Data: struct {
+			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"${1/\w+\s*/\l$0/g}"\`
+		}{
+			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
+		},
+	})
+}
+
+// List${1/\w+\s*/\$0/g}s
+func (ctl *Controller) List$1s(c *gin.Context) {
+	req := db.List${1/\w+\s*/\$0/g}sReq{}
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
+		return
+	}
+
+	${1/\w+\s*/\$0/g}s, total,err := ctl.Service.List${1/\w+\s*/\$0/g}s(&req)
+
+	if err != nil {
+		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
+		return
+	}
+
+	c.JSON(http.StatusOK, &rest.BaseResp{
+		Meta: &rest.Meta{
+			Code: rest.CodeSuccess,
+		},
+		Data: struct {
+			${1/\w+\s*/\$0/g}s *db.${1/\w+\s*/\$0/g}Array \`json:"rows"\`
+			Total    uint64           \`json:"total"\`
+		}{
+			${1/\w+\s*/\$0/g}s: ${1/\w+\s*/\$0/g}s,
+			Total: total,
+		},
+	})
+
+}
+endsnippet
+
+
+snippet router
+// $3
+	authorized.GET("/${1/\w+\s*/\l$0/g}s/:${1/\w+\s*/\l$0/g}_id", ctl.Get$1)
+	authorized.POST("/${1/\w+\s*/\l$0/g}s", ctl.Create$1)
+	authorized.PUT("/${1/\w+\s*/\l$0/g}s/:${1/\w+\s*/\l$0/g}_id", ctl.Update$1)
+	authorized.DELETE("/${1/\w+\s*/\l$0/g}s/:${1/\w+\s*/\l$0/g}_id", ctl.Delete$1)
+	authorized.GET("/${1/\w+\s*/\l$0/g}s", ctl.List$1s)
+endsnippet
+
+snippet router1
+// $3
+	authorized.GET("/$2s/:$2_id", ctl.Get$1)
+	authorized.POST("/$2s", ctl.Create$1)
+	authorized.PUT("/$2s/:$2_id", ctl.Update$1)
+	authorized.DELETE("/$2s/:$2_id", ctl.Delete$1)
+	authorized.GET("/$2s", ctl.List$1s)
+endsnippet
+
+snippet mbase
 package db
 type ${1} struct {
 	ID                          uint64              \`gorm:"primary_key" json:"id"\`
@@ -95,6 +426,22 @@ type ${1} struct {
 	Creator         *iamRest.User                 \`gorm:"-" json:"creator,omitempty"\`
 	Updator         *iamRest.User                 \`gorm:"-" json:"updator,omitempty"\`
 }
+
+type List$1sReq struct {
+	OrderBy *string \`form:"order_by"\`
+	Sort    string  \`form:"sort,default=desc"\` // desc or asc, default desc
+	Search  *string \`form:"search"\`            // Search issues against their title and description
+	Scope   string  \`form:"scope,default=all"\` // Return ${1/\w+\s*/\l$0/g}s for the given scope: created_by_me, assigned_to_me or all. Defaults to all
+
+	CreatedAfter  *common.Time \`form:"created_after"\`
+	CreatedBefore *common.Time \`form:"created_before"\`
+	UpdatedAfter  *common.Time \`form:"updated_after"\`
+	UpdatedBefore *common.Time \`form:"updated_before"\`
+
+	PageNum  uint64 \`form:"page_num,default=1"\`
+	PageSize uint64 \`form:"page_size,default=10"\`
+}
+
 
 type ${1/\w+\s*/\$0/g}Array []${1/\w+\s*/\$0/g}
 
@@ -200,275 +547,149 @@ func (sa *${1/\w+\s*/\$0/g}Array) FillUsers(users map[uint64]*iamRest.User) {
 }
 endsnippet
 
-snippet ttsrv
+snippet dal
+package dal
 
-package service
+type $1DBAccess struct {
+	db *gorm.DB
+}
 
-// Get${1/\w+\s*/\$0/g}
-func (svc *Service) Get$1(${1/\w+\s*/\l$0/g}ID uint64) (*db.${1/\w+\s*/\$0/g}, error) {
-	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}ID)
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+func (da *$1DBAccess) Get(${1/\w+\s*/\l$0/g}ID uint64) (*db.$1, error) {
+	${1/\w+\s*/\l$0/g} := db.$1{}
+	if err := da.db.Where("id = ?", ${1/\w+\s*/\l$0/g}ID).First(&${1/\w+\s*/\l$0/g}).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, errors.Wrapf(err, "$1DBAccess.Get error")
 	}
+	return &${1/\w+\s*/\l$0/g}, nil
+}
 
-	${1/\w+\s*/\l$0/g}, err = svc.Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g}, true, true)
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+func (da *$1DBAccess) Create(${1/\w+\s*/\l$0/g} *db.$1) (*db.$1, error) {
+	if err := da.db.Create(${1/\w+\s*/\l$0/g}).Error; err != nil {
+		return nil, errors.Wrapf(err, "$1DBAccess.Create error")
 	}
-
 	return ${1/\w+\s*/\l$0/g}, nil
 }
 
-// 创建账单文件请求
-type ${1/\w+\s*/\$0/g}Param struct {
+func (da *$1DBAccess) Update(${1/\w+\s*/\l$0/g} *db.$1) (*db.$1, error) {
+	if err := da.db.Save(${1/\w+\s*/\l$0/g}).Error; err != nil {
+		return nil, errors.Wrapf(err, "$1DBAccess.Update error")
+	}
+	return ${1/\w+\s*/\l$0/g}, nil
 }
 
-// Create${1/\w+\s*/\$0/g}
-func (svc *Service) Create${1/\w+\s*/\$0/g}(param ${1/\w+\s*/\$0/g}Param, login *rest.LoginUser, fullInsert bool) (*db.${1/\w+\s*/\$0/g}, error) {
-	now := common.Now()
-
-	${1/\w+\s*/\l$0/g} := db.${1/\w+\s*/\$0/g}{
-//	Xxxx:     param.Xxx,
-
-		CreatedAt:   now,
-		CreatedBy:   login.ID,
-		UpdatedAt:   now,
-		UpdatedBy:   login.ID,
+func (da *$1DBAccess) Delete(${1/\w+\s*/\l$0/g} *db.$1) error {
+	if err := da.db.Delete(${1/\w+\s*/\l$0/g}).Error; err != nil {
+		return errors.Wrapf(err, "$1DBAccess.Delete error")
 	}
-
-	created, err := svc.DB.${1/\w+\s*/\$0/g}.Create(&${1/\w+\s*/\l$0/g})
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
-	}
-
-	created, err = svc.Fill${1/\w+\s*/\$0/g}With(created, true, true)
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
-	}
-
-	return created, nil
+	return nil
 }
 
-// Update${1/\w+\s*/\$0/g}
-func (svc *Service) Update${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id uint64, param ${1/\w+\s*/\$0/g}Param, login *rest.LoginUser) (*db.${1/\w+\s*/\$0/g}, error) {
 
-	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}Id)
+func (da *$1DBAccess) List(req *db.List$1sReq) (*db.$1Array, uint64, error) {
+	var ${1/\w+\s*/\l$0/g}s db.$1Array
+	var totalCount uint64
+	query := da.db.Model(&db.$1{})
+
+	if req.CreatedAfter != nil {
+		query = query.Where("created_at >= ?", *req.CreatedAfter)
+	}
+
+	if req.CreatedBefore != nil {
+		query = query.Where("created_at <= ?", *req.CreatedBefore)
+	}
+
+	if req.UpdatedAfter != nil {
+		query = query.Where("updated_at >= ?", *req.UpdatedAfter)
+	}
+
+	if req.UpdatedBefore != nil {
+		query = query.Where("updated_at <= ?", *req.UpdatedBefore)
+	}
+
+	//  TODO: 确认模糊搜索的字段
+	if req.Search != nil {
+		s := "%" + *req.Search + "%"
+		query = query.Where("title ILIKE ? or name ILIKE ? or description ILIKE ?", s, s, s)
+	}
+
+	//  TODO: 根据不同caseteshu处理
+	switch req.Scope {
+	case "all":
+	case "created_by_me":
+	case "assigned_to_me":
+	default:
+	}
+
+	err := query.Count(&totalCount).Error
 	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
-	}
-	if ${1/\w+\s*/\l$0/g} == nil {
-		return nil, &rest.CError{Message: "${1/\w+\s*/\l$0/g} does not exist", Code: rest.RequestDataNotExisted}
+		return nil, 0, errors.Wrapf(err, "$1DBAccess.List error")
 	}
 
-	now := common.Now()
-
-	//${1/\w+\s*/\l$0/g}.Xxx     = param.Xxx
-	${1/\w+\s*/\l$0/g}.UpdatedAt   = now
-	${1/\w+\s*/\l$0/g}.UpdatedBy   = login.ID
-
-	updated, err := svc.DB.${1/\w+\s*/\$0/g}.Update(${1/\w+\s*/\l$0/g})
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+	if req.PageSize > 0 {
+		query = query.Limit(req.PageSize)
+		if req.PageNum > 0 {
+			query = query.Offset((req.PageNum - 1) * req.PageSize)
+		}
 	}
 
-	updated, err = svc.Fill${1/\w+\s*/\$0/g}With(updated,  true)
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
+	if req.OrderBy != nil {
+		query = query.Order(*req.OrderBy + " " + req.Sort)
 	}
 
-	return updated, nil
+	if err := query.Find(&${1/\w+\s*/\l$0/g}s).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, totalCount, nil
+		}
+		return nil, totalCount, errors.Wrapf(err, "$1DBAccess.List error")
+	}
+
+	return &${1/\w+\s*/\l$0/g}s, totalCount, nil
 }
 
-// Delete${1/\w+\s*/\$0/g}
-func (svc *Service) Delete${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id uint64) (*db.${1/\w+\s*/\$0/g}, error) {
-
-	${1/\w+\s*/\l$0/g}, err := svc.DB.${1/\w+\s*/\$0/g}.Get(${1/\w+\s*/\l$0/g}Id)
-
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.DatabaseError}
+func (da *$1DBAccess) Creates(${1/\w+\s*/\l$0/g}s *[]db.$1) (*[]db.$1, error) {
+	if ${1/\w+\s*/\l$0/g}s == nil {
+		return nil, nil
 	}
 
-	if ${1/\w+\s*/\l$0/g} == nil {
-		return nil, &rest.CError{Message: "Stock item does not exist", Code: rest.RequestDataNotExisted}
+	for i := range *${1/\w+\s*/\l$0/g}s {
+		if err := da.db.Create(&(*${1/\w+\s*/\l$0/g}s)[i]).Error; err != nil {
+			return nil, errors.Wrapf(err, "$1DBAccess.Create error")
+		}
 	}
-
-	${1/\w+\s*/\l$0/g}, err = svc.Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g},  true)
-	if err != nil {
-		return nil, &rest.CError{InnerErr: err, Code: rest.InternalError}
-	}
-
-	return ${1/\w+\s*/\l$0/g}, svc.DB.${1/\w+\s*/\$0/g}.Delete(${1/\w+\s*/\l$0/g})
-
+	return ${1/\w+\s*/\l$0/g}s, nil
 }
 
-// Fill${1/\w+\s*/\$0/g}With
-func (svc *Service) Fill${1/\w+\s*/\$0/g}With(${1/\w+\s*/\l$0/g} *db.${1/\w+\s*/\$0/g},  withUser bool) (*db.${1/\w+\s*/\$0/g}, error) {
-	if ${1/\w+\s*/\l$0/g} == nil || !withUser {
-		return ${1/\w+\s*/\l$0/g}, nil
+func (da *$1DBAccess) Updates(${1/\w+\s*/\l$0/g}s *[]db.$1) (*[]db.$1, error) {
+	if ${1/\w+\s*/\l$0/g}s == nil {
+		return nil, nil
 	}
 
-	${1/\w+\s*/\l$0/g}s := db.${1/\w+\s*/\$0/g}Array{}
-	${1/\w+\s*/\l$0/g}s = append(${1/\w+\s*/\l$0/g}s, *${1/\w+\s*/\l$0/g})
-	err := svc.Fill${1/\w+\s*/\$0/g}sWith(&${1/\w+\s*/\l$0/g}s,  withUser)
-	if err != nil {
-		return ${1/\w+\s*/\l$0/g}, err
+	for i := range *${1/\w+\s*/\l$0/g}s {
+		if err := da.db.Save(&(*${1/\w+\s*/\l$0/g}s)[i]).Error; err != nil {
+			return nil, errors.Wrapf(err, "$1DBAccess.Update error")
+		}
 	}
-
-	return &${1/\w+\s*/\l$0/g}s[0], nil
+	return ${1/\w+\s*/\l$0/g}s, nil
 }
 
-// Fill${1/\w+\s*/\$0/g}sWith
-func (svc *Service) Fill${1/\w+\s*/\$0/g}sWith(${1/\w+\s*/\l$0/g}s *db.${1/\w+\s*/\$0/g}Array,  withUser bool) error {
+func (da *$1DBAccess) Deletes(${1/\w+\s*/\l$0/g}s *[]db.$1) error {
 	if ${1/\w+\s*/\l$0/g}s == nil {
 		return nil
 	}
 
-	if withUser {
-		userIDs := ${1/\w+\s*/\l$0/g}s.GetUIDs()
-		if len(userIDs) > 0 {
-			users, err := svc.BatchGetUserMap(userIDs)
-			if err != nil {
-				return err
-			}
-			${1/\w+\s*/\l$0/g}s.FillUsers(users)
+	for i := range *${1/\w+\s*/\l$0/g}s {
+		if err := da.db.Delete(&(*${1/\w+\s*/\l$0/g}s)[i]).Error; err != nil {
+			return errors.Wrapf(err, "$1DBAccess.Delete error")
 		}
 	}
-
 	return nil
 }
 endsnippet
 
-snippet ttctl
-package controller
-
-// Get$1
-func (ctl *Controller) Get${1/\w+\s*/\$0/g}(c *gin.Context) {
-
-	${1/\w+\s*/\l$0/g}ID, err := strconv.ParseUint(c.Param("xxx_item_id"), 10, 64)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
-		return
-	}
-
-	${1/\w+\s*/\l$0/g}, err := ctl.Service.Get${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}ID)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
-		return
-	}
-
-	c.JSON(http.StatusOK, &rest.BaseResp{
-		Meta: &rest.Meta{
-			Code: rest.CodeSuccess,
-		},
-		Data: struct {
-			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"stock_item"\`
-		}{
-			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
-		},
-	})
-
-}
-
-// Create${1/\w+\s*/\$0/g}
-func (ctl *Controller) Create${1/\w+\s*/\$0/g}(c *gin.Context) {
-
-	param := service.${1/\w+\s*/\$0/g}Param{}
-
-	if err := c.ShouldBindJSON(&param); err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
-		return
-	}
-
-	logUser := GetLoginUser(c)
-	${1/\w+\s*/\l$0/g}, err := ctl.Service.Create${1/\w+\s*/\$0/g}(param, logUser, true)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
-		return
-	}
-
-	c.JSON(http.StatusOK, &rest.BaseResp{
-		Meta: &rest.Meta{
-			Code: rest.CodeSuccess,
-		},
-		Data: struct {
-			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} \`json:"stock_item"\`
-		}{
-			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
-		},
-	})
-
-}
-
-// Update${1/\w+\s*/\$0/g}
-func (ctl *Controller) Update${1/\w+\s*/\$0/g}(c *gin.Context) {
-
-	${1/\w+\s*/\l$0/g}Id, err := strconv.ParseUint(c.Param("stock_item_id"), 10, 64)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
-		return
-	}
-
-	param := service.${1/\w+\s*/\$0/g}Param{}
-
-	if err := c.ShouldBindJSON(&param); err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
-		return
-	}
-
-	logUser := GetLoginUser(c)
-
-	${1/\w+\s*/\l$0/g}, err := ctl.Service.Update${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}Id, param, logUser)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
-		return
-	}
-
-	c.JSON(http.StatusOK, &rest.BaseResp{
-		Meta: &rest.Meta{
-			Code: rest.CodeSuccess,
-		},
-		Data: struct {
-			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} `json:"stock_item"`
-		}{
-			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
-		},
-	})
-
-}
-
-// Delete${1/\w+\s*/\$0/g}
-func (ctl *Controller) Delete${1/\w+\s*/\$0/g}(c *gin.Context) {
-	// params
-	${1/\w+\s*/\l$0/g}ID, err := strconv.ParseUint(c.Param("stock_item_id"), 10, 64)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.RequestParameterInvalid})
-		return
-	}
-
-	${1/\w+\s*/\l$0/g}, err := ctl.Service.Delete${1/\w+\s*/\$0/g}(${1/\w+\s*/\l$0/g}ID)
-	if err != nil {
-		c.Error(&rest.CError{InnerErr: err, Code: rest.InternalServiceError})
-		return
-	}
-
-	c.JSON(http.StatusOK, &rest.BaseResp{
-		Meta: &rest.Meta{
-			Code: rest.CodeSuccess,
-		},
-		Data: struct {
-			${1/\w+\s*/\$0/g} *db.${1/\w+\s*/\$0/g} `json:"stock_item"`
-		}{
-			${1/\w+\s*/\$0/g}: ${1/\w+\s*/\l$0/g},
-		},
-	})
-}
+snippet t1
+$1
+${1/\w+\s*/\l$0/g}
 endsnippet
 
-
-snippet ttrouter
-// router for(StockItem stock_item) $1 $2
-	authorized.GET("/${2/\w+\s*/\$0/g}s/:${2/\w+\s*/\$0/g}_id", ctl.Get${1/\w+\s*/\$0/g})
-	authorized.POST("/${2/\w+\s*/\$0/g}s", ctl.Create${1/\w+\s*/\$0/g})
-	authorized.PUT("/${2/\w+\s*/\$0/g}s/:${2/\w+\s*/\$0/g}_id", ctl.Update${1/\w+\s*/\$0/g})
-	authorized.DELETE("/${2/\w+\s*/\$0/g}s/:${2/\w+\s*/\$0/g}_id", ctl.Delete${1/\w+\s*/\$0/g})
-endsnippet
