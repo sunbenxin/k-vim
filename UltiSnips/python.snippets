@@ -184,17 +184,16 @@ endsnippet
 snippet view
 class $1View(View):
     def get(self, request, *args, **kwargs):
-        return api_response(0, "", {})
+        return api_response(ResponseCode.Success, "", {})
 
     def put(self, request, *args, **kwargs):
-        return api_response(0, "", {})
+        return api_response(ResponseCode.Success, "", {})
 
     def delete(self, request, *args, **kwargs):
-        return api_response(0, "", {})
+        return api_response(ResponseCode.Success, "", {})
 
     def post(self, request, *args, **kwargs):
         res = {}
-        ret_code = 40001
         err_msg = None
         calling_station = get_calling_station(request)
         try:
@@ -205,6 +204,14 @@ class $1View(View):
         return api_response(ret_code, err_msg, res)
 
     def list(self, request, *args, **kwargs):
-        return api_response(0, "", {})
+        return api_response(ResponseCode.Success, "", {})
 
+endsnippet
+
+snippet model
+class $1(NewBaseModel):
+    type = models.CharField(u'变更类型', max_length=64, null=False, blank=False, choices=CHANGE_LOG_TYPE)
+    start_time = models.DateField(u'开始时间')
+    details = JSONField(u'业务产品角度的变更描述', null=True)
+    desc = models.TextField(u'业务、产品角度的变更描述')
 endsnippet
