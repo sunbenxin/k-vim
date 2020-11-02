@@ -1,0 +1,119 @@
+snippet ystweb
+<h3>{{.meeting.Title}}</h3>
+
+{{$id := toString .meeting.MeetingId}}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meeting" $id}}">Basic</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingSpeakers" $id}}">Speakers</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingQuestions" $id}}">Questions</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "childMeetings" $id}}">Child Meetings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingAttendees" $id}}">Attendees</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingAgoraRecordings" $id}}">Raw Recordings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingRecordings" $id}}">Recordings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingRounds" $id}}">Cocktail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingPolls" $id}}">Polls</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{urlpath "meetingGroupfies" $id}}">Groupfies</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{urlpath "meetingCoHostings" $id}}">CoHostings</a>
+    </li>
+</ul>
+
+<table class="table table-bordered mt-3">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Speaker ID</th>
+        <th>Attendee ID</th>
+        <th>End Reason</th>
+        <th>Speaker Granted Time</th>
+        <th>Granted Timeout Time</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range $coHostingModel := .cohostings}}
+        <tr>
+            <td>{{$coHostingModel.Id}}</td>
+            <td>{{trimPrefix "MEETING_CO_HOSTING_STATUS_" $coHostingModel.Status.String}}</td>
+
+            {{if $coHostingModel.Speaker}}
+              {{$speakerId := toString $coHostingModel.Speaker.UserId}}
+              <td><a href="{{urlpath "user" $speakerId}}">{{$speakerId}}</a></td>
+            {{else}}
+              <td></td>
+            {{end}}
+
+            {{if $coHostingModel.Attendee}}
+              {{$attendeeId := toString $coHostingModel.Attendee.UserId}}
+              <td><a href="{{urlpath "user" $attendeeId}}">{{$attendeeId}}</a></td>
+            {{else}}
+              <td></td>
+            {{end}}
+
+            <td>{{trimPrefix "MEETING_CO_HOSTING_END_REASON_" $coHostingModel.EndReason.String}}</td>
+
+            <td>
+              {{if $coHostingModel.SpeakerGrantedTime}}
+                <span data-mmt-unix="{{$coHostingModel.SpeakerGrantedTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                  {{$coHostingModel.SpeakerGrantedTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
+                </span>
+              {{end}}
+            </td>
+            <td>
+              {{if $coHostingModel.GrantedTimeoutTime}}
+                <span data-mmt-unix="{{$coHostingModel.GrantedTimeoutTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                  {{$coHostingModel.GrantedTimeoutTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
+                </span>
+              {{end}}
+            </td>
+            <td>
+              {{if $coHostingModel.StartTime}}
+                <span data-mmt-unix="{{$coHostingModel.StartTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                  {{$coHostingModel.StartTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
+                </span>
+              {{end}}
+            </td>
+            <td>
+              {{if $coHostingModel.EndTime}}
+                <span data-mmt-unix="{{$coHostingModel.EndTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                  {{$coHostingModel.EndTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
+                </span>
+              {{end}}
+            </td>
+        </tr>
+    {{end}}
+    </tbody>
+</table>
+<div>
+    {{if ge (sub .page 1) 0}}
+    <a class="btn btn-link" href="{{urlpath "cohostings"}}?page={{sub .page 1}}">Prev</a>
+    {{else}}
+    <a class="btn btn-link disabled" href="{{urlpath "cohostings"}}?page={{sub .page 1}}">Prev</a>
+    {{end}}
+
+    <a class="btn btn-link" href="{{urlpath "cohostings"}}?page={{add .page 1}}">Next</a>
+</div>
+endsnippet

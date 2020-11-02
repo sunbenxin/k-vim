@@ -64,4 +64,31 @@ ${1}
 */
 endsnippet
 
+snippet ystroute
+app.Get("/meetings/{id:int64}/cohostings", middlewareSetMeeting, getMeetingCoHostings).Name = "meetingCoHostings"
+endsnippet
 
+snippet ystsrv
+func getMeetingCoHostings(ctx iris.Context) {
+	id := ctx.Params().GetInt64Default("id", 0)
+	page := ctx.URLParamInt64Default("page", 0)
+	res, err := superUserClient().MeetingCoHostings(
+		genCtxToBackend(ctx),
+		&pb.SuperUserMeetingCoHostingsRequest{
+			MeetingID: id,
+			Page:      page,
+		},
+	)
+	if err != nil {
+		glog(ctx).Error(err)
+		viewError(ctx, err)
+		return
+	}
+
+	ctx.ViewData("cohostings", res.CoHostings)
+	err = ctx.View("meetings/cohostings.html")
+	if err != nil {
+		glog(ctx).Error(err)
+	}
+}
+endsnippet
