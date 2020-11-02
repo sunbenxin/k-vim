@@ -76,17 +76,13 @@ snippet ystweb
             <td>{{trimPrefix "MEETING_CO_HOSTING_END_REASON_" $coHostingModel.EndReason.String}}</td>
 
             <td>
-              {{if $coHostingModel.SpeakerGrantedTime}}
-                <span data-mmt-unix="{{$coHostingModel.SpeakerGrantedTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
-                  {{$coHostingModel.SpeakerGrantedTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
+              {{if and (not (eq $ticket.TicketType.String "FREE")) (eq $ticket.Status.String "ENABLED") (not $.readyForSales) }}
+                <span class="text-danger" title="Payment setting is not ready for sales, this ticket type won't be shown on invitation page." data-toggle="tooltip">
+                  {{$ticket.Status}}
+                  <i class="fa fa-exclamation-triangle"></i>
                 </span>
-              {{end}}
-            </td>
-            <td>
-              {{if $coHostingModel.GrantedTimeoutTime}}
-                <span data-mmt-unix="{{$coHostingModel.GrantedTimeoutTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
-                  {{$coHostingModel.GrantedTimeoutTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
-                </span>
+              {{else}}
+                {{$ticket.Status}}
               {{end}}
             </td>
             <td>
