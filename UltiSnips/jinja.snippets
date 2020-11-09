@@ -87,14 +87,14 @@ snippet ystweb
             </td>
             <td>
               {{if $coHostingModel.StartTime}}
-                <span data-mmt-unix="{{$coHostingModel.StartTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                <span data-mmt-unix="{{$coHostingModel.StartTime}}"  data-mmt-format="YYYY.MM.DD HH:mm:ss Z">
                   {{$coHostingModel.StartTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
                 </span>
               {{end}}
             </td>
             <td>
               {{if $coHostingModel.EndTime}}
-                <span data-mmt-unix="{{$coHostingModel.EndTime}}"  data-mmt-format="YYYY.MM.DD HH:mm Z">
+                <span data-mmt-unix="{{$coHostingModel.EndTime}}"  data-mmt-format="YYYY.MM.DD HH:mm:ss Z">
                   {{$coHostingModel.EndTime| unix2Time | date "2006-01-02 15:04:05 -07"}}
                 </span>
               {{end}}

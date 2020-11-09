@@ -1,0 +1,37 @@
+snippet grpcmsg
+message ShareLinkModel{
+  int64 id = 1;
+  int64 meetingID = 2;
+  int64 creatorUserID = 3;
+  ProfileModel profile = 4;
+  string url = 5;
+  string buttonText = 6;
+  string message = 7;
+  bool  hide = 8;
+  CocktailMatchingTypeWrapper matchingType = 5;
+  google.protobuf.StringValue groupAName = 6;
+  google.protobuf.Int32Value numberOfRounds = 8;
+
+  int64 createdTime = 9;
+  int64 updatedTime = 10;
+  int64 deletedAt = 11;
+}
+endsnippet
+
+snippet grpcrpc
+  rpc Create$1 (Create$1Request) returns (Create$1Response);
+
+message Create$1Request{
+  int64 meetingID = 1;
+  int64 creatorUserID = 2;
+  string url = 3;
+  string buttonText = 4;
+  string message = 5;
+  bool  hide = 6;
+}
+
+message Create$1Response{
+  $1Model $2 = 1;
+}
+
+endsnippet
