@@ -1,0 +1,22 @@
+snippet gqltype
+type PresetChildMeeting {
+  id: ID!
+  creatorUserID: ID!
+  parentMeetingID: ID!
+  matchingType: CocktailMatchingType
+
+  "required when matchingType is TWO_GROUPS"
+  groupAName: String
+
+  "required when matchingType is TWO_GROUPS"
+  groupBName: String
+
+  numberOfRounds: Int
+  meetingRoundDuration: Int
+  topic: String
+  isEmailVerified: Boolean
+  createdTime: Int64!
+  updatedTime: Int64!
+  deletedAt: Int64!
+}
+endsnippet

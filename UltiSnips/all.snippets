@@ -68,3 +68,17 @@ endsnippet
 snippet nqa
 # noqa
 endsnippet
+
+snippet gplmutation
+    createShareLink(input: CreateShareLinkInput!): ShareLink!
+    updateShareLink(input: UpdateShareLinkInput!): ShareLink!
+    hideShareLink(shareLinkID: ID!): ShareLink!
+endsnippet
+
+snippet gplquery
+  latestShareLink(meetingID: ID!): ShareLink!
+endsnippet
+
+snippet gplsub
+  latestShareLink(meetingID: ID!): ShareLink!
+endsnippet

@@ -64,4 +64,239 @@ ${1}
 */
 endsnippet
 
+snippet ystroute
+app.Get("/meetings/{id:int64}/cohostings", middlewareSetMeeting, getMeetingCoHostings).Name = "meetingCoHostings"
+endsnippet
 
+snippet ystsrv
+func getMeetingCoHostings(ctx iris.Context) {
+	id := ctx.Params().GetInt64Default("id", 0)
+	page := ctx.URLParamInt64Default("page", 0)
+	res, err := superUserClient().MeetingCoHostings(
+		genCtxToBackend(ctx),
+		&pb.SuperUserMeetingCoHostingsRequest{
+			MeetingID: id,
+			Page:      page,
+		},
+	)
+	if err != nil {
+		glog(ctx).Error(err)
+		viewError(ctx, err)
+		return
+	}
+
+	ctx.ViewData("cohostings", res.CoHostings)
+	err = ctx.View("meetings/cohostings.html")
+	if err != nil {
+		glog(ctx).Error(err)
+	}
+}
+endsnippet
+
+snippet gqlmuta
+func (r *mutationResolver) Create$1(ctx context.Context, in Create$1Input) (*$1, error) {
+	return nil, nil
+}
+
+func (r *mutationResolver) Update$1(ctx context.Context, in Update$1Input) (*$1, error) {
+	return nil, nil
+}
+
+func (r *mutationResolver) $1(ctx context.Context, in $1Input) (*$1, error) {
+	return nil, nil
+}
+endsnippet
+
+snippet model
+// $1 model
+type $1 struct {
+	Timestamps
+	DeletedAt *time.Time
+
+	ID             int64
+	MeetingID      int64
+	CreatorUserID  int64
+	CreatorProfile *User `gorm:"foreignkey:CreatorUserID"`
+	URL            string
+	ButtonText     string
+	Message        string
+	Hide           bool
+}
+endsnippet
+
+snippet todo
+// TODO: $1
+endsnippet
+
+snippet conv
+func $1ToPb(sl *model.$1) *pb.$1Model {
+	if sl == nil {
+		return nil
+	}
+
+	r := pb.$1Model{
+		Id:            sl.ID,
+		CreatorUserID: sl.CreatorUserID,
+		CreatedTime: sl.CreatedTime.Unix(),
+		UpdatedTime: sl.UpdatedTime.Unix(),
+	}
+
+	return &r
+}
+
+endsnippet
+
+snippet srv
+func (server *speakerServer) Create$1(
+	ctx context.Context,
+	in *pb.Create$1Request,
+) (*pb.Create$1Response, error) {
+	uc := server.userContext(ctx)
+	if uc == nil {
+		return nil, errInvalidAccessToken
+	}
+
+	// check permission
+	err := hasOrganizerOrSpeakerMeetingAccessByCtx(ctx, server.gReadDB, in.MeetingID)
+	if err != nil {
+		return nil, err
+	}
+
+	sl := model.$1{
+		MeetingID:     in.MeetingID,
+		CreatorUserID: uc.UserId,
+		URL:           in.Url,
+		ButtonText:    in.ButtonText,
+		Message:       in.Message,
+		Hidden:        in.Hidden,
+	}
+
+	// create in db
+	err = server.gdb.Create(&sl).Error
+	if err != nil {
+		glog(ctx).WithModule(moduleMeetingLive).WithMeetingID(in.MeetingID).Error(err)
+		return nil, errInternal
+	}
+
+	return &pb.Create$1Response{
+		$1: conv.$1ToPb(&sl),
+	}, nil
+}
+
+func (server *speakerServer) Update$1(
+	ctx context.Context,
+	in *pb.Update$1Request,
+) (*pb.Update$1Response, error) {
+	uc := server.userContext(ctx)
+	if uc == nil {
+		return nil, errInvalidAccessToken
+	}
+
+	var sl model.$1
+	err := server.gdb.First(&sl, in.Id).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, grpcErrNotFound
+		}
+		glog(ctx).WithModule(moduleMeetingLive).With$1ID(in.Id).Error(err)
+		return nil, errInternal
+	}
+	// check permission
+	if uc.UserId != sl.CreatorUserID {
+		return nil, errAccessDenied
+	}
+
+	if in.Url != nil {
+		sl.URL = in.Url.GetValue()
+	}
+	if in.ButtonText != nil {
+		sl.ButtonText = in.ButtonText.GetValue()
+	}
+	if in.Message != nil {
+		sl.Message = in.Message.GetValue()
+	}
+	if in.Hidden != nil {
+		sl.Hidden = in.Hidden.GetValue()
+	}
+	// save in db
+	err = server.gdb.Save(&sl).Error
+	if err != nil {
+		glog(ctx).WithModule(moduleMeetingLive).With$1ID(in.Id).Error(err)
+		return nil, errInternal
+	}
+
+	return &pb.Update$1Response{
+		$1: conv.$1ToPb(&sl),
+	}, nil
+}
+
+endsnippet
+
+snippet srvtest
+func TestCreate$1(t *testing.T) {
+	requireBaseServer(
+		strs("conference",
+			"meeting",
+			"conference_speakers",
+			"meeting_speakers",
+			"user",
+			"user_session",
+			"user_email_tokens"),
+		func(db *sql.DB, gdb *gorm.DB, b *baseServer) {
+			loadFixtureFiles(db,
+				"conference.yml",
+				"meeting.yml",
+				"conference_speakers.yml",
+				"meeting_speakers.yml",
+				"user.yml",
+				"user_session.yml",
+				"share_links.yml")
+
+			in := pb.Create$1Request{
+				MeetingID:  9,
+				ButtonText: "dsaf",
+				Url:        "http://baidu.com",
+				Message:    "my blog",
+				Hidden:     false,
+			}
+			speaker := newSpeakerServer(b)
+			ctx := metadataContextByUserID(12)
+			_, err := speaker.Create$1(ctx, &in)
+			assert.Equal(t, nil, err)
+		})
+}
+
+func TestUpdate$1(t *testing.T) {
+	requireBaseServer(
+		strs("conference",
+			"meeting",
+			"conference_speakers",
+			"meeting_speakers",
+			"user",
+			"user_session",
+			"user_email_tokens"),
+		func(db *sql.DB, gdb *gorm.DB, b *baseServer) {
+			loadFixtureFiles(db,
+				"conference.yml",
+				"meeting.yml",
+				"conference_speakers.yml",
+				"meeting_speakers.yml",
+				"user.yml",
+				"user_session.yml",
+				"share_links.yml")
+
+			in := pb.Update$1Request{
+				Id:         1,
+				ButtonText: &wrappers.StringValue{Value: "topic"},
+				Url:        &wrappers.StringValue{Value: "https://runtheworld.today"},
+				Hidden:     &wrappers.BoolValue{Value: true},
+			}
+
+			speaker := newSpeakerServer(b)
+			ctx := metadataContextByUserID(12)
+			_, err := speaker.Update$1(ctx, &in)
+			assert.Equal(t, nil, err)
+		})
+}
+
+endsnippet

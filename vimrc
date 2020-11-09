@@ -588,7 +588,7 @@ fun! <SID>StripTrailingWhitespaces()
     %s/\s\+$//e
     call cursor(l, c)
 endfun
-autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd FileType c,cpp,java,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
 
 " 定义函数AutoSetFileHead，自动插入文件头
@@ -657,7 +657,7 @@ endif
 set background=dark
 set t_Co=256
 
-"colorscheme solarized
+" colorscheme solarized
 colorscheme molokai
 
 
@@ -698,6 +698,9 @@ highlight SpellLocal term=underline cterm=underline
 " ":history : list of all your commands
 " <CR>     : carriage Return for maps
 " <Bar>    : | pipe
+" set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:¶,precedes:«,extends:»
 
 " vim plugin tips
 " \ 
+
+" rember
